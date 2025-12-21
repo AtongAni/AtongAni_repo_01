@@ -1,0 +1,41 @@
+
+# ---------- OS / Editor ----------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ---------- Secrets ----------
+**/.env
+**/.env.*
+.envrc
+
+# ---------- Python / Django ----------
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Django static/media (adjust as needed)
+backend/staticfiles/
+backend/media/
+
+# ---------- Node / React ----------
+**/node_modules/
+**/dist/
+**/build/
+**/.cache/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
