@@ -1,7 +1,18 @@
 
 import { api } from "./client";
 
-export const registerCustomer = (data) => api.post("/api/auth/register/customer/", data);
-export const registerFarmer = (data) => api.post("/api/auth/register/farmer/", data);
-export const login = (data) => api.post("/api/auth/login/", data);
-export const me = () => api.get("/api/auth/me/");
+export function login({ username, password }) {
+  return api.post("/api/auth/login/", { username, password });
+}
+
+export function me() {
+  return api.get("/api/auth/me/");
+}
+
+export function registerCustomer(data) {
+  return api.post("/api/auth/register/customer/", data);
+}
+
+export function registerFarmer(data) {
+  return api.post("/api/auth/register/farmer/", data);
+}

@@ -1,13 +1,37 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login.jsx";
-import Dashboard from "./pages/Dashboard.jsx"; // optional
+import Dashboard from "./pages/Dashboard.jsx";
+
+// Simple protected route wrapper
+function ProtectedRoute({ children }) {
+  const token = localStorage.getItem("access");
+  if (!token) return <Navigate to="/login" replace />;
+  return children;
+}
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />           {/* login page */}
-        <Route path="/dashboard" element={<Dashboard />} /> {/* protected page */}
+        {/* Default route goes to login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
+        {/* Login/Register page */}
+        <Route path="/login" element={<Login />} />
+
+        {/* Protected dashboard */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Fallback for unknown routes */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
   );
