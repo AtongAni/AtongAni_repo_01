@@ -24,3 +24,6 @@ class MeView(APIView):
             "email": u.email,
             "role": u.role,
         })
+    
+
+
