@@ -86,11 +86,38 @@ class CartViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'])
     def checkout(self, request):
-        """Checkout cart - clear all items for user"""
+        """Checkout cart - reduce post quantities, delete sold-out posts, and clear cart items"""
         cart_items = CartItem.objects.filter(user=request.user)
         count = cart_items.count()
+        
+        if count == 0:
+            return Response(
+                {'message': 'Cart is already empty'},
+                status=status.HTTP_200_OK
+            )
+        
+        # Process each cart item
+        deleted_posts = []
+        for cart_item in cart_items:
+            post = cart_item.post
+            # Reduce post quantity by the amount purchased
+            post.quantity -= cart_item.quantity
+            
+            # If quantity reaches zero or below, delete the post
+            if post.quantity <= 0:
+                deleted_posts.append(post.title)
+                post.delete()
+            else:
+                post.save()
+        
+        # Clear all cart items for this user
         cart_items.delete()
+        
+        response_msg = f'Checked out {count} items'
+        if deleted_posts:
+            response_msg += f'. Sold-out posts deleted: {", ".join(deleted_posts)}'
+        
         return Response(
-            {'message': f'Checked out {count} items'},
+            {'message': response_msg, 'deleted_posts': deleted_posts},
             status=status.HTTP_200_OK
         )
