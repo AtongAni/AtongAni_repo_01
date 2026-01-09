@@ -86,15 +86,13 @@ export default function Dashboard() {
           </button>
         )}
 
-        {user.role === "CUSTOMER" && (
-          <button
-            className={`tab-btn ${activeTab === "cart" ? "active" : ""}`}
-            onClick={() => setActiveTab("cart")}
-            title="View shopping cart"
-          >
-            🛒 Cart
-          </button>
-        )}
+        <button
+          className={`tab-btn ${activeTab === "cart" ? "active" : ""}`}
+          onClick={() => setActiveTab("cart")}
+          title="View shopping cart"
+        >
+          🛒 Cart
+        </button>
 
         <button
           className={`tab-btn ${activeTab === "profile" ? "active" : ""}`}
@@ -120,8 +118,8 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Cart Tab - For customers only */}
-        {activeTab === "cart" && user.role === "CUSTOMER" && (
+        {/* Cart Tab - For all users */}
+        {activeTab === "cart" && (
           <CartView />
         )}
 

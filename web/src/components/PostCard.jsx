@@ -11,6 +11,7 @@ export default function PostCard({ post, user, onRefresh }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const isOwner = user?.id === post?.author_id;
+  const canAddToCart = post?.price && !isOwner;
 
   const handleAddToCart = async () => {
     if (!post?.id) return;
@@ -89,7 +90,7 @@ export default function PostCard({ post, user, onRefresh }) {
           >
             💬 Comment
           </button>
-          {post?.price && (
+          {canAddToCart && (
             <button
               className="action-btn cart-btn"
               onClick={handleAddToCart}
