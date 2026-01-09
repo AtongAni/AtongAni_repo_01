@@ -1,16 +1,22 @@
 
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { me } from "../api/auth";
-import { setAuthToken } from "../api/client";
+import { setAuthToken, clearAuthToken } from "../api/client";
+import PostFeed from "../components/PostFeed";
+import FarmerPostForm from "../components/FarmerPostForm";
+import CartView from "../components/CartView";
+import "./Dashboard.css";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [status, setStatus] = useState("Loading...");
+  const [activeTab, setActiveTab] = useState("feed"); // "feed" | "myPosts" | "cart" | "profile"
+  const [refreshFeed, setRefreshFeed] = useState(0);
 
   useEffect(() => {
-    const token = localStorage.getItem("access");
+    const token = localStorage.getItem("accessToken");
     if (!token) {
       navigate("/login");
       return;
@@ -26,34 +32,137 @@ export default function Dashboard() {
       .catch((err) => {
         console.log(err);
         // token invalid/expired -> logout + go login
-        localStorage.removeItem("access");
-        setAuthToken(null);
+        clearAuthToken();
         navigate("/login");
       });
-  }, [navigate]);
+    // navigate is stable from React Router, no dependency needed
+  }, []);
 
   function handleLogout() {
-    localStorage.removeItem("access");
-    setAuthToken(null);
+    clearAuthToken();
     navigate("/login");
   }
 
-  if (!user) return <div style={{ padding: 16 }}>{status}</div>;
+  function handlePostCreated() {
+    setRefreshFeed((prev) => prev + 1);
+    setActiveTab("feed");
+  }
+
+  if (!user) return <div className="dashboard-loading">{status}</div>;
 
   return (
-    <div className="dashboard-container" style={{ maxWidth: 640, margin: "40px auto", padding: 16 }}>
-      <h2>Welcome, {user.username}</h2>
+    <div className="dashboard-container">
+      {/* Header */}
+      <header className="dashboard-header">
+        <div className="header-content">
+          <h1>Farmers Market</h1>
+          <div className="header-user">
+            <span className="user-avatar">{user.username.charAt(0).toUpperCase()}</span>
+            <div className="user-info">
+              <p className="user-name">{user.username}</p>
+              <p className="user-role">{user.role === "FARMER" ? "🚜 Farmer" : "👤 Customer"}</p>
+            </div>
+          </div>
+        </div>
+      </header>
 
-      <div style={{ marginTop: 12, lineHeight: 1.8 }}>
-        <div><b>Email:</b> {user.email}</div>
-        <div><b>Role:</b> {user.role}</div>
-      </div>
-
-      <div style={{ marginTop: 18, display: "flex", gap: 12 }}>
-        <button onClick={handleLogout} style={{ padding: "10px 14px" }}>
-          Logout
+      {/* Tabs Navigation */}
+      <nav className="dashboard-tabs">
+        <button
+          className={`tab-btn ${activeTab === "feed" ? "active" : ""}`}
+          onClick={() => setActiveTab("feed")}
+          title="Browse all posts"
+        >
+          📰 Feed
         </button>
-      </div>
+
+        {user.role === "FARMER" && (
+          <button
+            className={`tab-btn ${activeTab === "myPosts" ? "active" : ""}`}
+            onClick={() => setActiveTab("myPosts")}
+            title="Manage your posts"
+          >
+            📝 My Posts
+          </button>
+        )}
+
+        {user.role === "CUSTOMER" && (
+          <button
+            className={`tab-btn ${activeTab === "cart" ? "active" : ""}`}
+            onClick={() => setActiveTab("cart")}
+            title="View shopping cart"
+          >
+            🛒 Cart
+          </button>
+        )}
+
+        <button
+          className={`tab-btn ${activeTab === "profile" ? "active" : ""}`}
+          onClick={() => setActiveTab("profile")}
+          title="Account settings"
+        >
+          ⚙️ Profile
+        </button>
+      </nav>
+
+      {/* Tab Content */}
+      <main className="dashboard-content">
+        {/* Feed Tab - For all users */}
+        {activeTab === "feed" && (
+          <PostFeed user={user} refreshTrigger={refreshFeed} />
+        )}
+
+        {/* My Posts Tab - For farmers only */}
+        {activeTab === "myPosts" && user.role === "FARMER" && (
+          <div className="tab-content">
+            <FarmerPostForm onPostCreated={handlePostCreated} />
+            <PostFeed user={user} refreshTrigger={refreshFeed} />
+          </div>
+        )}
+
+        {/* Cart Tab - For customers only */}
+        {activeTab === "cart" && user.role === "CUSTOMER" && (
+          <CartView />
+        )}
+
+        {/* Profile Tab */}
+        {activeTab === "profile" && (
+          <div className="profile-view">
+            <div className="profile-card">
+              <div className="profile-avatar-large">
+                {user.username.charAt(0).toUpperCase()}
+              </div>
+              <h2>{user.username}</h2>
+              <p className="profile-role">
+                {user.role === "FARMER" ? "🚜 Farmer" : "👤 Customer"}
+              </p>
+
+              <div className="profile-details">
+                <div className="detail-item">
+                  <span className="detail-label">Email</span>
+                  <span className="detail-value">{user.email}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-label">Account Type</span>
+                  <span className="detail-value">
+                    {user.role === "FARMER" ? "Farmer Account" : "Customer Account"}
+                  </span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-label">Member Since</span>
+                  <span className="detail-value">
+                    {new Date(user.date_joined).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+
+              <button onClick={handleLogout} className="logout-btn">
+                Logout
+              </button>
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 }

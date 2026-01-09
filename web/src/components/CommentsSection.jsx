@@ -1,0 +1,113 @@
+import { useEffect, useState } from "react";
+import { getComments, createComment, deleteComment } from "../api/comments";
+import "./CommentsSection.css";
+
+export default function CommentsSection({ postId, user, onRefresh }) {
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    loadComments();
+  }, [postId]);
+
+  async function loadComments() {
+    try {
+      const res = await getComments(postId);
+      setComments(res.data || []);
+      setError("");
+    } catch (err) {
+      setError("Failed to load comments");
+      console.log(err);
+    }
+  }
+
+  async function handleSubmitComment(e) {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+
+    setLoading(true);
+    setError("");
+
+    try {
+      await createComment(postId, { text: newComment });
+      setNewComment("");
+      await loadComments();
+      if (onRefresh) onRefresh();
+    } catch (err) {
+      setError("Failed to post comment");
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleDeleteComment(commentId) {
+    if (!window.confirm("Delete this comment?")) return;
+
+    try {
+      await deleteComment(postId, commentId);
+      await loadComments();
+      if (onRefresh) onRefresh();
+    } catch (err) {
+      setError("Failed to delete comment");
+    }
+  }
+
+  return (
+    <div className="comments-section">
+      <div className="comments-header">
+        <h4>Comments ({comments.length})</h4>
+      </div>
+
+      {/* Comment Form */}
+      <form onSubmit={handleSubmitComment} className="comment-form">
+        <textarea
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          placeholder="Add a comment..."
+          rows={2}
+          className="comment-input"
+          maxLength={500}
+        />
+        <button
+          type="submit"
+          disabled={loading || !newComment.trim()}
+          className="comment-submit-btn"
+        >
+          {loading ? "Posting..." : "Post"}
+        </button>
+      </form>
+
+      {error && <div className="comment-error">{error}</div>}
+
+      {/* Comments List */}
+      <div className="comments-list">
+        {comments.length === 0 ? (
+          <p className="no-comments">No comments yet. Be the first!</p>
+        ) : (
+          comments.map((comment) => (
+            <div key={comment.id} className="comment-item">
+              <div className="comment-header">
+                <span className="comment-author">{comment.author_name || "User"}</span>
+                <span className="comment-date">
+                  {new Date(comment.created_at).toLocaleDateString()}
+                </span>
+              </div>
+              <p className="comment-text">{comment.text}</p>
+              {user?.id === comment.author_id && (
+                <button
+                  onClick={() => handleDeleteComment(comment.id)}
+                  className="comment-delete-btn"
+                >
+                  Delete
+                </button>
+              )}
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}

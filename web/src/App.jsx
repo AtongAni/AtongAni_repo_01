@@ -6,7 +6,7 @@ import Welcome from "./pages/Welcome.jsx";
 
 // Simple protected route wrapper
 function ProtectedRoute({ children }) {
-  const token = localStorage.getItem("access");
+  const token = localStorage.getItem("accessToken");
   if (!token) return <Navigate to="/login" replace />;
   return children;
 }
