@@ -114,16 +114,23 @@
 }
 
 .qty-input {
-  width: 40px;
+  width: 50px;
   border: none;
   background: transparent;
   text-align: center;
   font-size: 14px;
   font-weight: 600;
+  padding: 0 4px;
 }
 
 .qty-input:focus {
   outline: none;
+}
+
+.qty-unit {
+  font-size: 12px;
+  color: #999;
+  padding-right: 4px;
 }
 
 .cart-item-subtotal {

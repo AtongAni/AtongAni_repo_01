@@ -35,14 +35,41 @@ class CartViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        # Validate quantity doesn't exceed available stock
+        try:
+            quantity_decimal = float(quantity)
+        except (ValueError, TypeError):
+            return Response(
+                {'error': 'Invalid quantity format'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if quantity_decimal <= 0:
+            return Response(
+                {'error': 'Quantity must be greater than 0'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if quantity_decimal > float(post.quantity):
+            return Response(
+                {'error': f'Quantity exceeds available stock. Available: {post.quantity} {post.unit}'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         cart_item, created = CartItem.objects.get_or_create(
             user=request.user,
             post=post,
-            defaults={'quantity': quantity}
+            defaults={'quantity': quantity_decimal}
         )
 
         if not created:
-            cart_item.quantity += int(quantity)
+            new_quantity = cart_item.quantity + quantity_decimal
+            if new_quantity > float(post.quantity):
+                return Response(
+                    {'error': f'Total quantity exceeds available stock. Available: {post.quantity} {post.unit}'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            cart_item.quantity = new_quantity
             cart_item.save()
 
         serializer = self.get_serializer(cart_item)

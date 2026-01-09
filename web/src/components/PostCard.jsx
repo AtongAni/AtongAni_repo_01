@@ -9,6 +9,8 @@ export default function PostCard({ post, user, onRefresh }) {
   const [cartError, setCartError] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showQuantitySelector, setShowQuantitySelector] = useState(false);
+  const [selectedQuantity, setSelectedQuantity] = useState("");
 
   const isOwner = user?.id === post?.author_id;
   const canAddToCart = post?.price && !isOwner;
@@ -16,16 +18,28 @@ export default function PostCard({ post, user, onRefresh }) {
   const handleAddToCart = async () => {
     if (!post?.id) return;
     
+    if (!selectedQuantity || selectedQuantity <= 0) {
+      setCartError("Please enter a valid quantity");
+      return;
+    }
+
+    if (parseFloat(selectedQuantity) > parseFloat(post.quantity)) {
+      setCartError(`Maximum available: ${post.quantity} ${post.unit === 'KG' ? 'kg' : 'g'}`);
+      return;
+    }
+    
     setCartLoading(true);
     setCartError("");
     
     try {
       const { addToCart } = await import("../api/cart");
-      await addToCart(post.id, 1);
+      await addToCart(post.id, parseFloat(selectedQuantity));
       setCartError("✓ Added to cart");
+      setShowQuantitySelector(false);
+      setSelectedQuantity("");
       setTimeout(() => setCartError(""), 2000);
     } catch (err) {
-      setCartError("Failed to add to cart");
+      setCartError(err?.response?.data?.error || "Failed to add to cart");
     } finally {
       setCartLoading(false);
     }
@@ -64,7 +78,7 @@ export default function PostCard({ post, user, onRefresh }) {
           </div>
         </div>
         {post?.price && (
-          <div className="post-price">${post.price}</div>
+          <div className="post-price">₱{post.price}</div>
         )}
       </div>
 
@@ -73,6 +87,13 @@ export default function PostCard({ post, user, onRefresh }) {
 
       {/* Content */}
       <p className="post-content">{post?.content}</p>
+
+      {/* Quantity Info */}
+      {post?.quantity && (
+        <div className="post-quantity-info">
+          Available: {post.quantity} {post.unit === 'KG' ? 'kg' : 'g'}
+        </div>
+      )}
 
       {/* Image placeholder */}
       {post?.image && (
@@ -91,13 +112,46 @@ export default function PostCard({ post, user, onRefresh }) {
             💬 Comment
           </button>
           {canAddToCart && (
-            <button
-              className="action-btn cart-btn"
-              onClick={handleAddToCart}
-              disabled={cartLoading}
-            >
-              {cartLoading ? "Adding..." : "🛒 Add to Cart"}
-            </button>
+            <>
+              {!showQuantitySelector ? (
+                <button
+                  className="action-btn cart-btn"
+                  onClick={() => setShowQuantitySelector(true)}
+                  disabled={cartLoading}
+                >
+                  🛒 Add to Cart
+                </button>
+              ) : (
+                <div className="quantity-selector">
+                  <input
+                    type="number"
+                    value={selectedQuantity}
+                    onChange={(e) => setSelectedQuantity(e.target.value)}
+                    placeholder={`Enter amount (${post.unit === 'KG' ? 'kg' : 'g'})`}
+                    step="0.01"
+                    min="0"
+                    max={post.quantity}
+                    className="quantity-input"
+                  />
+                  <button
+                    className="action-btn add-btn"
+                    onClick={handleAddToCart}
+                    disabled={cartLoading}
+                  >
+                    {cartLoading ? "Adding..." : "Add"}
+                  </button>
+                  <button
+                    className="action-btn cancel-btn"
+                    onClick={() => {
+                      setShowQuantitySelector(false);
+                      setSelectedQuantity("");
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+            </>
           )}
           {isOwner && (
             <button

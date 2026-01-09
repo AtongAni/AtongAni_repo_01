@@ -98,6 +98,12 @@
   cursor: not-allowed;
 }
 
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
 @media (max-width: 480px) {
   .farmer-post-form {
     padding: 16px;
@@ -130,5 +136,10 @@
   .submit-btn {
     padding: 10px;
     font-size: 13px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 }

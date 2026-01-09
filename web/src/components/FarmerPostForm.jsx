@@ -6,6 +6,8 @@ export default function FarmerPostForm({ onPostCreated }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [price, setPrice] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [unit, setUnit] = useState("KG");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -36,11 +38,19 @@ export default function FarmerPostForm({ onPostCreated }) {
         postData.price = parseFloat(price);
       }
 
+      if (quantity && !isNaN(quantity)) {
+        postData.quantity = parseFloat(quantity);
+      }
+
+      postData.unit = unit;
+
       await createPost(postData);
       setSuccess("Post created successfully!");
       setTitle("");
       setContent("");
       setPrice("");
+      setQuantity("");
+      setUnit("KG");
 
       setTimeout(() => {
         setSuccess("");
@@ -112,7 +122,7 @@ export default function FarmerPostForm({ onPostCreated }) {
         </div>
 
         <div className="form-group">
-          <label htmlFor="price">Price ($)</label>
+          <label htmlFor="price">Price (₱ PHP)</label>
           <input
             id="price"
             type="number"
@@ -123,6 +133,35 @@ export default function FarmerPostForm({ onPostCreated }) {
             min="0"
             className="form-input"
           />
+        </div>
+
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="quantity">Available Quantity</label>
+            <input
+              id="quantity"
+              type="number"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              placeholder="Enter quantity"
+              step="0.01"
+              min="0"
+              className="form-input"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="unit">Unit of Measurement</label>
+            <select
+              id="unit"
+              value={unit}
+              onChange={(e) => setUnit(e.target.value)}
+              className="form-input"
+            >
+              <option value="KG">Kilogram (kg)</option>
+              <option value="G">Gram (g)</option>
+            </select>
+          </div>
         </div>
 
         {error && <div className="form-error">{error}</div>}

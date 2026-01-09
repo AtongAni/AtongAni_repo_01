@@ -73,7 +73,7 @@ export default function CartView() {
     return <div className="cart-view"><div className="loading">Loading cart...</div></div>;
   }
 
-  const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity || 0), 0);
+  const total = cartItems.reduce((sum, item) => sum + (item.post.price * item.quantity || 0), 0);
 
   return (
     <div className="cart-view">
@@ -92,14 +92,14 @@ export default function CartView() {
             {cartItems.map((item) => (
               <div key={item.id} className="cart-item">
                 <div className="cart-item-info">
-                  <h4 className="cart-item-title">{item.title}</h4>
-                  <p className="cart-item-farmer">from {item.farmer_name || "Farmer"}</p>
-                  <p className="cart-item-price">${item.price}</p>
+                  <h4 className="cart-item-title">{item.post.title}</h4>
+                  <p className="cart-item-farmer">from {item.post.author_name || "Farmer"}</p>
+                  <p className="cart-item-price">₱{item.post.price}</p>
                 </div>
 
                 <div className="cart-item-quantity">
                   <button
-                    onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                    onClick={() => handleUpdateQuantity(item.id, item.quantity - 0.1)}
                     className="qty-btn"
                     aria-label="Decrease quantity"
                   >
@@ -108,12 +108,14 @@ export default function CartView() {
                   <input
                     type="number"
                     value={item.quantity}
-                    onChange={(e) => handleUpdateQuantity(item.id, parseInt(e.target.value))}
+                    onChange={(e) => handleUpdateQuantity(item.id, parseFloat(e.target.value))}
                     className="qty-input"
-                    min="1"
+                    step="0.01"
+                    min="0"
                   />
+                  <span className="qty-unit">{item.unit === 'KG' ? 'kg' : 'g'}</span>
                   <button
-                    onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                    onClick={() => handleUpdateQuantity(item.id, item.quantity + 0.1)}
                     className="qty-btn"
                     aria-label="Increase quantity"
                   >
@@ -122,7 +124,7 @@ export default function CartView() {
                 </div>
 
                 <div className="cart-item-subtotal">
-                  <p>${(item.price * item.quantity).toFixed(2)}</p>
+                  <p>₱{(item.post.price * item.quantity).toFixed(2)}</p>
                   <button
                     onClick={() => handleRemoveItem(item.id)}
                     className="remove-btn"
@@ -138,7 +140,7 @@ export default function CartView() {
           <div className="cart-summary">
             <div className="summary-row">
               <span>Subtotal:</span>
-              <span>${total.toFixed(2)}</span>
+              <span>₱{total.toFixed(2)}</span>
             </div>
             <div className="summary-row">
               <span>Shipping:</span>
@@ -146,7 +148,7 @@ export default function CartView() {
             </div>
             <div className="summary-row total-row">
               <span>Total:</span>
-              <span>${total.toFixed(2)}</span>
+              <span>₱{total.toFixed(2)}</span>
             </div>
           </div>
 
