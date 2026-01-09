@@ -130,7 +130,7 @@ export default function Login() {
   }
 
   return (
-    <div style={{ maxWidth: 420, margin: "40px auto", padding: 16 }}>
+    <div className="login-container" style={{ maxWidth: 420, margin: "40px auto", padding: 16 }}>
       <h2 style={{ marginBottom: 12 }}>
         {mode === "login" ? "Login" : "Create Account"}
       </h2>
@@ -275,14 +275,6 @@ export default function Login() {
       {error ? (
         <p style={{ marginTop: 14, color: "#b91c1c" }}>{error}</p>
       ) : null}
-
-      <div style={{ marginTop: 16 }}>
-        <small>
-          <Link to="/login" style={{ color: "#64748b" }}>
-            Back
-          </Link>
-        </small>
-      </div>
     </div>
   );
 }

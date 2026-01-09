@@ -1,0 +1,22 @@
+/* Responsive adjustments for mobile screens (360x640) */
+@media (max-width: 360px) {
+  /* Ensure root container does not exceed screen width */
+  #root {
+    max-width: 100% !important;
+    padding: 0.5rem !important;
+  }
+
+  /* Login page container */
+  .login-container {
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0.5rem !important;
+  }
+
+  /* Dashboard page container */
+  .dashboard-container {
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0.5rem !important;
+  }
+}

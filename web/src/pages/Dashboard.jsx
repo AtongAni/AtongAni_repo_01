@@ -41,7 +41,7 @@ export default function Dashboard() {
   if (!user) return <div style={{ padding: 16 }}>{status}</div>;
 
   return (
-    <div style={{ maxWidth: 640, margin: "40px auto", padding: 16 }}>
+    <div className="dashboard-container" style={{ maxWidth: 640, margin: "40px auto", padding: 16 }}>
       <h2>Welcome, {user.username}</h2>
 
       <div style={{ marginTop: 12, lineHeight: 1.8 }}>
@@ -53,12 +53,6 @@ export default function Dashboard() {
         <button onClick={handleLogout} style={{ padding: "10px 14px" }}>
           Logout
         </button>
-
-        {/* Optional: If you want a separate register page later, keep this.
-            If you only want register inside Login page, you can remove this. */}
-        <Link to="/login" style={{ padding: "10px 14px", color: "#2563eb" }}>
-          Create another account
-        </Link>
       </div>
     </div>
   );

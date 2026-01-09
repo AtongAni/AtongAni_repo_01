@@ -2,6 +2,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
+import Welcome from "./pages/Welcome.jsx";
 
 // Simple protected route wrapper
 function ProtectedRoute({ children }) {
@@ -14,8 +15,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Default route goes to login */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        {/* Default route shows welcome page */}
+        <Route path="/" element={<Welcome />} />
 
         {/* Login/Register page */}
         <Route path="/login" element={<Login />} />
