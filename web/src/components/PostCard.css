@@ -104,7 +104,7 @@
 .action-btn {
   flex: 1;
   min-width: 120px;
-  padding: 10px 12px;
+  padding: 12px 12px;
   border: 1px solid #ddd;
   background: white;
   border-radius: 6px;
@@ -113,6 +113,10 @@
   font-weight: 500;
   transition: all 0.2s ease;
   white-space: nowrap;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .action-btn:hover:not(:disabled) {
@@ -294,11 +298,12 @@
 .quantity-input {
   flex: 1;
   min-width: 80px;
-  padding: 8px 10px;
+  padding: 12px 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: 14px;
   outline: none;
+  font-size: 16px; /* Prevents zoom on iOS */
 }
 
 .quantity-input:focus {
@@ -310,14 +315,16 @@
   font-size: 12px;
   color: #999;
   min-width: 30px;
+  padding: 0 4px;
 }
 
 .add-btn,
 .cancel-btn {
   flex: 0 1 auto;
-  padding: 8px 12px !important;
-  font-size: 12px !important;
+  padding: 10px 12px !important;
+  font-size: 13px !important;
   min-width: 70px;
+  min-height: 40px;
 }
 
 .add-btn {
