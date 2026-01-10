@@ -1,9 +1,9 @@
-from rest_framework import viewsets, permissions, filters
+from rest_framework import viewsets, permissions, filters, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
-from .models import Post
-from .serializers import PostSerializer
+from .models import Post, PostImage
+from .serializers import PostSerializer, PostImageSerializer
 from comments.models import Comment
 from comments.serializers import CommentSerializer
 import logging
@@ -58,6 +58,79 @@ class PostViewSet(viewsets.ModelViewSet):
             logger.error(f"Error deleting post {instance.id}: {str(e)}", exc_info=True)
             raise
     
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+    def upload_images(self, request, pk=None):
+        """Upload multiple images to a post (max 15)"""
+        post = self.get_object()
+        
+        # Check ownership
+        if post.author != request.user:
+            return Response({'error': 'You can only add images to your own posts'}, status=status.HTTP_403_FORBIDDEN)
+        
+        # Get uploaded files
+        files = request.FILES.getlist('images')
+        
+        if not files:
+            return Response({'error': 'No images provided'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Check total image count (max 15)
+        current_count = post.images.count()
+        if current_count + len(files) > 15:
+            return Response(
+                {'error': f'Maximum 15 images allowed. You have {current_count}, trying to add {len(files)}'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        created_images = []
+        errors = []
+        
+        for idx, file in enumerate(files):
+            try:
+                # Validate file
+                if file.size > 5 * 1024 * 1024:
+                    errors.append(f"{file.name}: File too large (max 5MB)")
+                    continue
+                
+                allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+                if file.content_type not in allowed_types:
+                    errors.append(f"{file.name}: Unsupported format")
+                    continue
+                
+                # Create PostImage
+                post_image = PostImage.objects.create(
+                    post=post,
+                    image=file,
+                    order=current_count + idx
+                )
+                created_images.append(PostImageSerializer(post_image, context={'request': request}).data)
+            except Exception as e:
+                errors.append(f"{file.name}: {str(e)}")
+        
+        return Response({
+            'images': created_images,
+            'errors': errors if errors else None
+        }, status=status.HTTP_201_CREATED if created_images else status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=True, methods=['delete'], permission_classes=[permissions.IsAuthenticated])
+    def delete_image(self, request, pk=None):
+        """Delete a specific image from a post"""
+        post = self.get_object()
+        
+        # Check ownership
+        if post.author != request.user:
+            return Response({'error': 'You can only delete images from your own posts'}, status=status.HTTP_403_FORBIDDEN)
+        
+        image_id = request.data.get('image_id')
+        if not image_id:
+            return Response({'error': 'image_id required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            image = PostImage.objects.get(id=image_id, post=post)
+            image.delete()
+            return Response({'success': 'Image deleted'}, status=status.HTTP_204_NO_CONTENT)
+        except PostImage.DoesNotExist:
+            return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
+    
     @action(detail=False, methods=['get'], permission_classes=[permissions.AllowAny])
     def by_role(self, request):
         """Filter posts by author role"""
@@ -69,6 +142,7 @@ class PostViewSet(viewsets.ModelViewSet):
         
         serializer = self.get_serializer(posts, many=True)
         return Response(serializer.data)
+
 
 
 class PostCommentViewSet(viewsets.ViewSet):
