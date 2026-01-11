@@ -5,6 +5,8 @@ import { me } from "../api/auth";
 import { setAuthToken, clearAuthToken } from "../api/client";
 import PostFeed from "../components/PostFeed";
 import FarmerPostForm from "../components/FarmerPostForm";
+import FarmerOrdersManagement from "../components/FarmerOrdersManagement";
+import OrdersView from "../components/OrdersView";
 import CartView from "../components/CartView";
 import "./Dashboard.css";
 
@@ -12,7 +14,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [status, setStatus] = useState("Loading...");
-  const [activeTab, setActiveTab] = useState("feed"); // "feed" | "myPosts" | "cart" | "profile"
+  const [activeTab, setActiveTab] = useState("feed"); // "feed" | "myPosts" | "orders" | "cart" | "profile"
   const [refreshFeed, setRefreshFeed] = useState(0);
 
   useEffect(() => {
@@ -77,13 +79,22 @@ export default function Dashboard() {
         </button>
 
         {user.role === "FARMER" && (
-          <button
-            className={`tab-btn ${activeTab === "myPosts" ? "active" : ""}`}
-            onClick={() => setActiveTab("myPosts")}
-            title="Manage your posts"
-          >
-            📝 My Posts
-          </button>
+          <>
+            <button
+              className={`tab-btn ${activeTab === "myPosts" ? "active" : ""}`}
+              onClick={() => setActiveTab("myPosts")}
+              title="Manage your posts"
+            >
+              📝 My Posts
+            </button>
+            <button
+              className={`tab-btn ${activeTab === "orders" ? "active" : ""}`}
+              onClick={() => setActiveTab("orders")}
+              title="Manage customer orders"
+            >
+              📦 Orders
+            </button>
+          </>
         )}
 
         <button
@@ -93,6 +104,16 @@ export default function Dashboard() {
         >
           🛒 Cart
         </button>
+
+        {user.role === "CUSTOMER" && (
+          <button
+            className={`tab-btn ${activeTab === "orders" ? "active" : ""}`}
+            onClick={() => setActiveTab("orders")}
+            title="View your orders"
+          >
+            📦 My Orders
+          </button>
+        )}
 
         <button
           className={`tab-btn ${activeTab === "profile" ? "active" : ""}`}
@@ -118,9 +139,23 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* Orders Tab - For farmers only */}
+        {activeTab === "orders" && user.role === "FARMER" && (
+          <div className="tab-content">
+            <FarmerOrdersManagement />
+          </div>
+        )}
+
         {/* Cart Tab - For all users */}
         {activeTab === "cart" && (
           <CartView />
+        )}
+
+        {/* My Orders Tab - For customers only */}
+        {activeTab === "orders" && user.role === "CUSTOMER" && (
+          <div className="tab-content">
+            <OrdersView />
+          </div>
         )}
 
         {/* Profile Tab */}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { getCart, removeFromCart, updateCartItem, checkoutCart } from "../api/cart";
+import { getCart, removeFromCart, updateCartItem } from "../api/cart";
+import { checkoutCart } from "../api/orders";
 import "./CartView.css";
 
 export default function CartView() {
@@ -7,6 +8,7 @@ export default function CartView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [checkingOut, setCheckingOut] = useState(false);
+  const [orderCreated, setOrderCreated] = useState(null);
 
   useEffect(() => {
     loadCart();
@@ -58,12 +60,13 @@ export default function CartView() {
     setError("");
 
     try {
-      await checkoutCart();
+      const response = await checkoutCart();
+      setOrderCreated(response.data.order);
       setCartItems([]);
-      // Show success - in real app, navigate to order confirmation
-      alert("Order placed successfully!");
+      // Show order creation success
+      alert("Order created! Waiting for farmer approval...");
     } catch (err) {
-      setError(err?.response?.data?.detail || "Checkout failed");
+      setError(err?.response?.data?.error || "Checkout failed");
     } finally {
       setCheckingOut(false);
     }
@@ -74,6 +77,42 @@ export default function CartView() {
   }
 
   const total = cartItems.reduce((sum, item) => sum + (item.post.price * item.quantity || 0), 0);
+
+  // Show order status if order was just created
+  if (orderCreated) {
+    return (
+      <div className="cart-view">
+        <h3>Order Confirmation</h3>
+        <div className="order-status-card">
+          <h4>Order #{orderCreated.id}</h4>
+          <div className={`order-status-badge status-${orderCreated.status.toLowerCase()}`}>
+            {orderCreated.status === 'IN_PROGRESS' ? '⏳ In Progress' : orderCreated.status}
+          </div>
+          <p className="order-message">
+            {orderCreated.status === 'IN_PROGRESS' 
+              ? '📋 Your order is awaiting farmer approval. You will be notified once the farmer responds.'
+              : 'Your order status will appear here.'}
+          </p>
+          <div className="order-items-list">
+            <h5>Order Items:</h5>
+            {orderCreated.items.map((item) => (
+              <div key={item.id} className="order-item-summary">
+                <span>{item.post.title}</span>
+                <span>{parseFloat(item.quantity) || 0} {item.unit}</span>
+                <span>₱{(parseFloat(item.total_price) || 0).toFixed(2)}</span>
+              </div>
+            ))}
+          </div>
+          <div className="order-total">
+            <strong>Total: ₱{(parseFloat(orderCreated.total_amount) || 0).toFixed(2)}</strong>
+          </div>
+          <button onClick={() => setOrderCreated(null)} className="back-btn">
+            Continue Shopping
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="cart-view">
