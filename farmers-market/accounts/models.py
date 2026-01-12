@@ -8,7 +8,10 @@ class User(AbstractUser):
         CUSTOMER = 'CUSTOMER', 'Customer'
         FARMER = 'FARMER', 'Farmer'
         ADMIN = 'ADMIN', 'Admin'
-    role = models.CharField(max_length=20, choices=Role.choices, default=Role.CUSTOMER)  
+    role = models.CharField(max_length=20, choices=Role.choices, default=Role.CUSTOMER)
+    is_suspended = models.BooleanField(default=False)
+    suspended_at = models.DateTimeField(null=True, blank=True)
+    suspension_reason = models.TextField(blank=True)
 
 
 

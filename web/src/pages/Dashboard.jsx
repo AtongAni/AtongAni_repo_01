@@ -8,13 +8,14 @@ import FarmerPostForm from "../components/FarmerPostForm";
 import FarmerOrdersManagement from "../components/FarmerOrdersManagement";
 import OrdersView from "../components/OrdersView";
 import CartView from "../components/CartView";
+import AdminDashboard from "../components/AdminDashboard";
 import "./Dashboard.css";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [status, setStatus] = useState("Loading...");
-  const [activeTab, setActiveTab] = useState("feed"); // "feed" | "myPosts" | "orders" | "cart" | "profile"
+  const [activeTab, setActiveTab] = useState("feed"); // "feed" | "myPosts" | "orders" | "cart" | "profile" | "admin"
   const [refreshFeed, setRefreshFeed] = useState(0);
 
   useEffect(() => {
@@ -115,6 +116,16 @@ export default function Dashboard() {
           </button>
         )}
 
+        {user.role === "ADMIN" && (
+          <button
+            className={`tab-btn ${activeTab === "admin" ? "active" : ""}`}
+            onClick={() => setActiveTab("admin")}
+            title="Admin dashboard"
+          >
+            🛡️ Admin
+          </button>
+        )}
+
         <button
           className={`tab-btn ${activeTab === "profile" ? "active" : ""}`}
           onClick={() => setActiveTab("profile")}
@@ -156,6 +167,11 @@ export default function Dashboard() {
           <div className="tab-content">
             <OrdersView />
           </div>
+        )}
+
+        {/* Admin Dashboard - For admins only */}
+        {activeTab === "admin" && user.role === "ADMIN" && (
+          <AdminDashboard user={user} />
         )}
 
         {/* Profile Tab */}
