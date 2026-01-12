@@ -176,12 +176,10 @@ class PostCommentViewSet(viewsets.ViewSet):
     def create(self, request, post_id=None):
         """Create a new comment on a post"""
         try:
-            Post.objects.get(id=post_id)
-            data = request.data.copy()
-            data['post'] = post_id
-            serializer = CommentSerializer(data=data, context={'request': request})
+            post = Post.objects.get(id=post_id)
+            serializer = CommentSerializer(data=request.data, context={'request': request})
             if serializer.is_valid():
-                serializer.save()
+                serializer.save(post=post, author=request.user)
                 return Response(serializer.data, status=201)
             return Response(serializer.errors, status=400)
         except Post.DoesNotExist:

@@ -11,14 +11,12 @@ class UserSimpleSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     author = UserSimpleSerializer(read_only=True)
-    author_id = serializers.IntegerField(write_only=True, required=False)
     
     class Meta:
         model = Comment
-        fields = ('id', 'post', 'author', 'author_id', 'content', 'created_at', 'updated_at')
-        read_only_fields = ('created_at', 'updated_at', 'post')
+        fields = ('id', 'post', 'author', 'content', 'created_at', 'updated_at')
+        read_only_fields = ('created_at', 'updated_at', 'post', 'author')
     
     def create(self, validated_data):
-        validated_data.pop('author_id', None)
         validated_data['author'] = self.context['request'].user
         return super().create(validated_data)

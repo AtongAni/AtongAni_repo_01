@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getComments, createComment, deleteComment } from "../api/comments";
+import ConfirmationModal from "./ConfirmationModal";
 import "./CommentsSection.css";
 
 export default function CommentsSection({ postId, user, onRefresh }) {
@@ -7,6 +8,7 @@ export default function CommentsSection({ postId, user, onRefresh }) {
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, commentId: null });
 
   useEffect(() => {
     loadComments();
@@ -31,7 +33,7 @@ export default function CommentsSection({ postId, user, onRefresh }) {
     setError("");
 
     try {
-      await createComment(postId, { text: newComment });
+      await createComment(postId, { content: newComment });
       setNewComment("");
       await loadComments();
       if (onRefresh) onRefresh();
@@ -43,13 +45,20 @@ export default function CommentsSection({ postId, user, onRefresh }) {
     }
   }
 
-  async function handleDeleteComment(commentId) {
-    if (!window.confirm("Delete this comment?")) return;
+  function openDeleteModal(commentId) {
+    setDeleteModal({ isOpen: true, commentId });
+  }
 
+  function closeDeleteModal() {
+    setDeleteModal({ isOpen: false, commentId: null });
+  }
+
+  async function handleConfirmDelete() {
     try {
-      await deleteComment(postId, commentId);
+      await deleteComment(postId, deleteModal.commentId);
       await loadComments();
       if (onRefresh) onRefresh();
+      closeDeleteModal();
     } catch (err) {
       setError("Failed to delete comment");
     }
@@ -82,6 +91,17 @@ export default function CommentsSection({ postId, user, onRefresh }) {
 
       {error && <div className="comment-error">{error}</div>}
 
+      <ConfirmationModal 
+        isOpen={deleteModal.isOpen}
+        title="Delete Comment"
+        message="Are you sure you want to delete this comment? This action cannot be undone."
+        onConfirm={handleConfirmDelete}
+        onCancel={closeDeleteModal}
+        confirmText="Delete"
+        cancelText="Cancel"
+        isDangerous={true}
+      />
+
       {/* Comments List */}
       <div className="comments-list">
         {comments.length === 0 ? (
@@ -90,15 +110,15 @@ export default function CommentsSection({ postId, user, onRefresh }) {
           comments.map((comment) => (
             <div key={comment.id} className="comment-item">
               <div className="comment-header">
-                <span className="comment-author">{comment.author_name || "User"}</span>
+                <span className="comment-author">{comment.author?.username || "User"}</span>
                 <span className="comment-date">
                   {new Date(comment.created_at).toLocaleDateString()}
                 </span>
               </div>
-              <p className="comment-text">{comment.text}</p>
-              {user?.id === comment.author_id && (
+              <p className="comment-text">{comment.content}</p>
+              {user?.id === comment.author?.id && (
                 <button
-                  onClick={() => handleDeleteComment(comment.id)}
+                  onClick={() => openDeleteModal(comment.id)}
                   className="comment-delete-btn"
                 >
                   Delete
