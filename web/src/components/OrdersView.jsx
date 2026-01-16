@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getOrders } from "../api/orders";
+import { getOrders, confirmOrderReceived } from "../api/orders";
 import "./OrdersView.css";
 
 export default function OrdersView() {
@@ -7,6 +7,8 @@ export default function OrdersView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [expandedOrder, setExpandedOrder] = useState(null);
+  const [deliveryModal, setDeliveryModal] = useState({ isOpen: false, orderId: null });
+  const [confirmingOrder, setConfirmingOrder] = useState(null);
 
   useEffect(() => {
     loadOrders();
@@ -14,6 +16,14 @@ export default function OrdersView() {
     const interval = setInterval(loadOrders, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  // Check for orders in SIMULATION_DELIVERY status that need confirmation
+  useEffect(() => {
+    const deliveryOrder = orders.find(order => order.status === 'SIMULATION_DELIVERY');
+    if (deliveryOrder && !deliveryModal.isOpen) {
+      setDeliveryModal({ isOpen: true, orderId: deliveryOrder.id });
+    }
+  }, [orders, deliveryModal.isOpen]);
 
   async function loadOrders() {
     try {
@@ -49,6 +59,8 @@ export default function OrdersView() {
         return "⏳";
       case "APPROVED":
         return "✅";
+      case "SIMULATION_DELIVERY":
+        return "🚚";
       case "REJECTED":
         return "❌";
       case "COMPLETED":
@@ -57,6 +69,20 @@ export default function OrdersView() {
         return "📋";
     }
   };
+
+  async function handleConfirmDelivery(orderId) {
+    setConfirmingOrder(orderId);
+    try {
+      await confirmOrderReceived(orderId);
+      setDeliveryModal({ isOpen: false, orderId: null });
+      await loadOrders();
+    } catch (err) {
+      setError(err?.response?.data?.error || "Failed to confirm delivery");
+      console.log(err);
+    } finally {
+      setConfirmingOrder(null);
+    }
+  }
 
   if (loading) {
     return <div className="orders-view"><div className="loading">Loading orders...</div></div>;
@@ -132,24 +158,63 @@ export default function OrdersView() {
                     </div>
                   )}
 
-                  {order.status === "IN_PROGRESS" && (
-                    <div className="in-progress-note">
-                      <p>
-                        ⏳ This order is awaiting farmer approval. You will be notified once
-                        the farmer responds.
-                      </p>
-                    </div>
-                  )}
-
                   {order.status === "APPROVED" && (
                     <div className="approved-note">
                       <p>✅ Your order has been approved by the farmer!</p>
+                      <p className="delivery-note">Preparing for delivery...</p>
+                    </div>
+                  )}
+
+                  {order.status === "SIMULATION_DELIVERY" && (
+                    <div className="delivery-note">
+                      <p>🚚 Your order is on its way! Please confirm when you have received it.</p>
                     </div>
                   )}
                 </div>
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Delivery Confirmation Modal */}
+      {deliveryModal.isOpen && deliveryModal.orderId && (
+        <div className="delivery-modal-overlay">
+          <div className="delivery-modal">
+            <div className="modal-header">
+              <h3>Order Delivery</h3>
+              <button 
+                className="modal-close" 
+                onClick={() => setDeliveryModal({ isOpen: false, orderId: null })}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="modal-body">
+              <p className="modal-icon">🚚</p>
+              <p className="modal-title">Have you received your order?</p>
+              <p className="modal-message">
+                Please confirm once you have received all items from Order #{deliveryModal.orderId}.
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button 
+                className="btn-confirm"
+                onClick={() => handleConfirmDelivery(deliveryModal.orderId)}
+                disabled={confirmingOrder === deliveryModal.orderId}
+              >
+                {confirmingOrder === deliveryModal.orderId ? 'Confirming...' : 'Yes, I Received It'}
+              </button>
+              <button 
+                className="btn-cancel"
+                onClick={() => setDeliveryModal({ isOpen: false, orderId: null })}
+                disabled={confirmingOrder === deliveryModal.orderId}
+              >
+                Close
+              </button>
+            </div>
+            {error && <div className="modal-error">{error}</div>}
+          </div>
         </div>
       )}
     </div>

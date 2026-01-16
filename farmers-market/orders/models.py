@@ -9,14 +9,17 @@ class Order(models.Model):
         ('PENDING', 'Pending'),
         ('IN_PROGRESS', 'In Progress'),
         ('APPROVED', 'Approved'),
-        ('REJECTED', 'Rejected'),
+        ('SIMULATION_DELIVERY', 'Simulation Delivery'),  # 10-second middle event before customer confirmation
         ('COMPLETED', 'Completed'),
+        ('REJECTED', 'Rejected'),
     ]
     
     customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    approved_at = models.DateTimeField(blank=True, null=True, help_text="Timestamp when farmer approved the order")
+    delivery_confirmation_shown_at = models.DateTimeField(blank=True, null=True, help_text="Timestamp when simulation delivery began")
     rejection_reason = models.TextField(blank=True, null=True, help_text="Reason for rejection if applicable")
     
     class Meta:
