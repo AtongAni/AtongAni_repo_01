@@ -20,8 +20,9 @@ class OrderSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Order
-        fields = ['id', 'customer_name', 'status', 'items', 'total_amount', 'rejection_reason', 'created_at', 'updated_at']
-        read_only_fields = ['id', 'customer_name', 'created_at', 'updated_at']
+        fields = ['id', 'customer_name', 'status', 'items', 'total_amount', 'rejection_reason', 
+                  'approved_at', 'delivery_confirmation_shown_at', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'customer_name', 'approved_at', 'delivery_confirmation_shown_at', 'created_at', 'updated_at']
     
     def get_total_amount(self, obj):
         return sum(item.total_price for item in obj.items.all())

@@ -4,8 +4,11 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.db import transaction
+from django.utils import timezone
+import threading
 from .models import Order, OrderItem
 from .serializers import OrderSerializer, OrderDetailSerializer
+from .tasks import trigger_simulation_delivery
 from cart.models import CartItem
 from posts.models import Post
 
@@ -103,10 +106,20 @@ class OrderViewSet(viewsets.ModelViewSet):
         
         # If all items from all farmers are processed, mark order as APPROVED
         order.status = 'APPROVED'
+        order.approved_at = timezone.now()
         order.save()
         
         # Clear cart for this order's customer
         CartItem.objects.filter(user=order.customer).delete()
+        
+        # Trigger simulation delivery after 10 seconds (in background thread)
+        # This will update order status to SIMULATION_DELIVERY after 10 seconds
+        delivery_thread = threading.Thread(
+            target=trigger_simulation_delivery,
+            args=(order.id,),
+            daemon=True
+        )
+        delivery_thread.start()
         
         serializer = self.get_serializer(order)
         return Response(
@@ -182,3 +195,48 @@ class OrderViewSet(viewsets.ModelViewSet):
         orders = Order.objects.filter(customer=request.user)
         serializer = self.get_serializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    @action(detail=True, methods=['post'])
+    def confirm_received(self, request, pk=None):
+        """
+        Customer confirms they have received their order.
+        
+        This endpoint transitions order from SIMULATION_DELIVERY to COMPLETED.
+        When real delivery is implemented, this endpoint will verify delivery
+        completion (e.g., check GPS location, delivery signature, etc.)
+        and then mark the order as COMPLETED.
+        
+        Args:
+            pk: Order ID
+            
+        Returns:
+            Updated order with COMPLETED status
+        """
+        order = self.get_object()
+        
+        # Verify this is the customer who placed the order
+        if order.customer != request.user:
+            return Response(
+                {'error': 'You are not authorized to confirm this order'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        # Can only confirm if order is in SIMULATION_DELIVERY status
+        if order.status != 'SIMULATION_DELIVERY':
+            return Response(
+                {'error': f'Cannot confirm order with status: {order.status}. '
+                          f'Order must be in delivery status.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Mark order as COMPLETED
+        order.status = 'COMPLETED'
+        order.save(update_fields=['status', 'updated_at'])
+        
+        serializer = self.get_serializer(order)
+        return Response(
+            {
+                'message': 'Order confirmed as received',
+                'order': serializer.data
+            },
+            status=status.HTTP_200_OK
+        )

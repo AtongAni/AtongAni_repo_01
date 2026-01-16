@@ -24,3 +24,6 @@ export function approveOrder(orderId) {
 export function rejectOrder(orderId, reason = "") {
   return api.post(`/api/orders/${orderId}/reject/`, { reason });
 }
+export function confirmOrderReceived(orderId) {
+  return api.post(`/api/orders/${orderId}/confirm_received/`);
+}
