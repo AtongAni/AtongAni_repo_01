@@ -6,6 +6,7 @@ cycler==0.12.1
 debugpy==1.8.20
 decorator==5.2.1
 Django==4.2
+djangorestframework-simplejwt==5.5.1
 djangorestframework
 executing==2.2.1
 filelock==3.20.0
@@ -49,6 +50,7 @@ tornado==6.5.4
 traitlets==5.14.3
 typing_extensions==4.15.0
 wcwidth==0.5.3
+
 
 
 
