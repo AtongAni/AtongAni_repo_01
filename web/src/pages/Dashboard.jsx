@@ -63,7 +63,7 @@ export default function Dashboard() {
             <span className="user-avatar">{user.username.charAt(0).toUpperCase()}</span>
             <div className="user-info">
               <p className="user-name">{user.username}</p>
-              <p className="user-role">{user.role === "FARMER" ? "🚜 Farmer" : "👤 Customer"}</p>
+              <p className="user-role">{user.role === "FARMER" ? "Farmer" : "Customer"}</p>
             </div>
           </div>
         </div>
@@ -76,7 +76,7 @@ export default function Dashboard() {
           onClick={() => setActiveTab("feed")}
           title="Browse all posts"
         >
-          📰 Feed
+          Feed
         </button>
 
         {user.role === "FARMER" && (
@@ -86,14 +86,14 @@ export default function Dashboard() {
               onClick={() => setActiveTab("myPosts")}
               title="Manage your posts"
             >
-              📝 My Posts
+              My Posts
             </button>
             <button
               className={`tab-btn ${activeTab === "orders" ? "active" : ""}`}
               onClick={() => setActiveTab("orders")}
               title="Manage customer orders"
             >
-              📦 Orders
+              Orders
             </button>
           </>
         )}
@@ -103,7 +103,7 @@ export default function Dashboard() {
           onClick={() => setActiveTab("cart")}
           title="View shopping cart"
         >
-          🛒 Cart
+          Cart
         </button>
 
         {user.role === "CUSTOMER" && (
@@ -112,7 +112,7 @@ export default function Dashboard() {
             onClick={() => setActiveTab("orders")}
             title="View your orders"
           >
-            📦 My Orders
+            My Orders
           </button>
         )}
 
@@ -122,7 +122,7 @@ export default function Dashboard() {
             onClick={() => setActiveTab("admin")}
             title="Admin dashboard"
           >
-            🛡️ Admin
+            Admin
           </button>
         )}
 
@@ -131,7 +131,7 @@ export default function Dashboard() {
           onClick={() => setActiveTab("profile")}
           title="Account settings"
         >
-          ⚙️ Profile
+          Profile
         </button>
       </nav>
 

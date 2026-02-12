@@ -23,9 +23,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8ud^^*g^ve9je-+e(d0g=z#8oi6_e7ri(ied9kmgjyl#up*l6e'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    ".trycloudflare.com",  # ← this is the key
+]
 
 
 # Application definition

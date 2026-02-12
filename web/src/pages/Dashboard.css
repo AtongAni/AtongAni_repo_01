@@ -3,7 +3,10 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: #f5f5f5;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: #d3ebce;
 }
 
 .dashboard-loading {
@@ -17,9 +20,9 @@
 
 /* Header */
 .dashboard-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #72a367;
   color: white;
-  padding: 16px;
+  padding: 8px 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
@@ -36,7 +39,7 @@
 
 .dashboard-header h1 {
   margin: 0;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 700;
 }
 
@@ -44,6 +47,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  order: -1;
 }
 
 .user-avatar {
@@ -59,7 +63,7 @@
 }
 
 .user-info {
-  text-align: right;
+  text-align: left;
 }
 
 .user-name {
@@ -69,7 +73,7 @@
 }
 
 .user-role {
-  margin: 2px 0 0;
+  margin: 0;
   font-size: 12px;
   opacity: 0.9;
 }
@@ -119,13 +123,13 @@
 }
 
 .tab-btn:hover {
-  color: #667eea;
-  background: #f9f9f9;
+  color: #72a367;
+  background: #c4e8a0;
 }
 
 .tab-btn.active {
-  color: #667eea;
-  border-bottom-color: #667eea;
+  color: #72a367;
+  border-bottom-color: #72a367;
 }
 
 /* Main Content Area */

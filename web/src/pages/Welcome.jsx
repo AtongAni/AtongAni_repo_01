@@ -14,11 +14,11 @@ function Welcome() {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh" }}>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", backgroundColor: "#d6ffa9" }}>
       <h1>Welcome to AtongAni</h1>
       <button
         onClick={handleProceed}
-        style={{ padding: "0.5rem 1rem", fontSize: "1rem", cursor: "pointer" }}
+        style={{ padding: "0.5rem 1rem", fontSize: "1rem", cursor: "pointer", backgroundColor: "#72a367", color: "white", border: "none", borderRadius: "4px" }}
       >
         Accept
       </button>
