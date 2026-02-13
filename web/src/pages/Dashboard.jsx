@@ -20,25 +20,24 @@ export default function Dashboard() {
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-    if (!token) {
-      navigate("/login");
-      return;
+    if (token) {
+      setAuthToken(token);
+      me()
+        .then((res) => {
+          setUser(res.data);
+          setStatus("");
+        })
+        .catch((err) => {
+          console.log(err);
+          // token invalid/expired -> clear auth
+          clearAuthToken();
+          setUser(null);
+          setStatus("");
+        });
+    } else {
+      // No token - user is browsing as guest
+      setStatus("");
     }
-
-    setAuthToken(token);
-
-    me()
-      .then((res) => {
-        setUser(res.data);
-        setStatus("");
-      })
-      .catch((err) => {
-        console.log(err);
-        // token invalid/expired -> logout + go login
-        clearAuthToken();
-        navigate("/login");
-      });
-    // navigate is stable from React Router, no dependency needed
   }, []);
 
   function handleLogout() {
@@ -51,7 +50,7 @@ export default function Dashboard() {
     setActiveTab("feed");
   }
 
-  if (!user) return <div className="dashboard-loading">{status}</div>;
+  if (status) return <div className="dashboard-loading">{status}</div>;
 
   return (
     <div className="dashboard-container">
@@ -59,13 +58,21 @@ export default function Dashboard() {
       <header className="dashboard-header">
         <div className="header-content">
           <h1>Farmers Market</h1>
-          <div className="header-user">
-            <span className="user-avatar">{user.username.charAt(0).toUpperCase()}</span>
-            <div className="user-info">
-              <p className="user-name">{user.username}</p>
-              <p className="user-role">{user.role === "FARMER" ? "Farmer" : "Customer"}</p>
+          {user ? (
+            <div className="header-user">
+              <span className="user-avatar">{user.username.charAt(0).toUpperCase()}</span>
+              <div className="user-info">
+                <p className="user-name">{user.username}</p>
+                <p className="user-role">{user.role === "FARMER" ? "Farmer" : "Customer"}</p>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="header-actions">
+              <button className="login-header-btn" onClick={() => navigate("/login")}>
+                Login / Sign Up
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
@@ -79,7 +86,7 @@ export default function Dashboard() {
           Feed
         </button>
 
-        {user.role === "FARMER" && (
+        {user?.role === "FARMER" && (
           <>
             <button
               className={`tab-btn ${activeTab === "myPosts" ? "active" : ""}`}
@@ -98,15 +105,17 @@ export default function Dashboard() {
           </>
         )}
 
-        <button
-          className={`tab-btn ${activeTab === "cart" ? "active" : ""}`}
-          onClick={() => setActiveTab("cart")}
-          title="View shopping cart"
-        >
-          Cart
-        </button>
+        {user && (
+          <button
+            className={`tab-btn ${activeTab === "cart" ? "active" : ""}`}
+            onClick={() => setActiveTab("cart")}
+            title="View shopping cart"
+          >
+            Cart
+          </button>
+        )}
 
-        {user.role === "CUSTOMER" && (
+        {user?.role === "CUSTOMER" && (
           <button
             className={`tab-btn ${activeTab === "orders" ? "active" : ""}`}
             onClick={() => setActiveTab("orders")}
@@ -116,7 +125,7 @@ export default function Dashboard() {
           </button>
         )}
 
-        {user.role === "ADMIN" && (
+        {user?.role === "ADMIN" && (
           <button
             className={`tab-btn ${activeTab === "admin" ? "active" : ""}`}
             onClick={() => setActiveTab("admin")}
@@ -126,24 +135,26 @@ export default function Dashboard() {
           </button>
         )}
 
-        <button
-          className={`tab-btn ${activeTab === "profile" ? "active" : ""}`}
-          onClick={() => setActiveTab("profile")}
-          title="Account settings"
-        >
-          Profile
-        </button>
+        {user && (
+          <button
+            className={`tab-btn ${activeTab === "profile" ? "active" : ""}`}
+            onClick={() => setActiveTab("profile")}
+            title="Account settings"
+          >
+            Profile
+          </button>
+        )}
       </nav>
 
       {/* Tab Content */}
       <main className="dashboard-content">
-        {/* Feed Tab - For all users */}
+        {/* Feed Tab - For all users (including guests) */}
         {activeTab === "feed" && (
           <PostFeed user={user} refreshTrigger={refreshFeed} />
         )}
 
         {/* My Posts Tab - For farmers only */}
-        {activeTab === "myPosts" && user.role === "FARMER" && (
+        {activeTab === "myPosts" && user?.role === "FARMER" && (
           <div className="tab-content">
             <FarmerPostForm onPostCreated={handlePostCreated} />
             <PostFeed user={user} refreshTrigger={refreshFeed} />
@@ -151,31 +162,31 @@ export default function Dashboard() {
         )}
 
         {/* Orders Tab - For farmers only */}
-        {activeTab === "orders" && user.role === "FARMER" && (
+        {activeTab === "orders" && user?.role === "FARMER" && (
           <div className="tab-content">
             <FarmerOrdersManagement />
           </div>
         )}
 
-        {/* Cart Tab - For all users */}
-        {activeTab === "cart" && (
+        {/* Cart Tab - For authenticated users only */}
+        {activeTab === "cart" && user && (
           <CartView />
         )}
 
         {/* My Orders Tab - For customers only */}
-        {activeTab === "orders" && user.role === "CUSTOMER" && (
+        {activeTab === "orders" && user?.role === "CUSTOMER" && (
           <div className="tab-content">
             <OrdersView />
           </div>
         )}
 
         {/* Admin Dashboard - For admins only */}
-        {activeTab === "admin" && user.role === "ADMIN" && (
+        {activeTab === "admin" && user?.role === "ADMIN" && (
           <AdminDashboard user={user} />
         )}
 
         {/* Profile Tab */}
-        {activeTab === "profile" && (
+        {activeTab === "profile" && user && (
           <div className="profile-view">
             <div className="profile-card">
               <div className="profile-avatar-large">

@@ -78,6 +78,30 @@
   opacity: 0.9;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  order: -1;
+}
+
+.login-header-btn {
+  background: white;
+  color: #72a367;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-header-btn:hover {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
 /* Tabs Navigation */
 .dashboard-tabs {
   display: flex;
@@ -258,7 +282,7 @@
 
 @media (max-width: 480px) {
   .dashboard-header {
-    padding: 12px;
+    padding: 8px 10px;
   }
 
   .header-content {
@@ -266,75 +290,224 @@
   }
 
   .dashboard-header h1 {
-    font-size: 18px;
-  }
-
-  .user-avatar {
-    width: 36px;
-    height: 36px;
     font-size: 16px;
   }
 
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
   .user-name {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .user-role {
-    font-size: 11px;
+    font-size: 10px;
   }
 
   .dashboard-tabs {
     gap: 0;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .tab-btn {
-    min-width: 70px;
-    padding: 12px 10px;
-    font-size: 12px;
+    min-width: 65px;
+    padding: 10px 8px;
+    font-size: 11px;
     border-bottom-width: 2px;
+    flex-shrink: 0;
   }
 
   .dashboard-content {
-    padding: 12px 0;
+    padding: 10px 0;
   }
 
   .tab-content {
-    padding: 0 12px;
+    padding: 0 10px;
   }
 
   .profile-view {
-    padding: 12px;
+    padding: 10px;
   }
 
   .profile-card {
-    padding: 24px 16px;
+    padding: 20px 12px;
   }
 
   .profile-avatar-large {
-    width: 70px;
-    height: 70px;
-    font-size: 32px;
-    margin-bottom: 12px;
+    width: 60px;
+    height: 60px;
+    font-size: 28px;
+    margin-bottom: 10px;
   }
 
   .profile-card h2 {
-    font-size: 20px;
+    font-size: 18px;
     margin-bottom: 6px;
   }
 
   .profile-details {
-    padding: 16px;
-    margin-bottom: 16px;
+    padding: 12px;
+    margin-bottom: 12px;
   }
 
   .detail-item {
-    padding: 10px 0;
+    padding: 8px 0;
   }
 
   .logout-btn {
-    padding: 10px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}
+
+/* Mobile Responsive - Extra Small (360px and below) */
+@media (max-width: 360px) {
+  .dashboard-container {
+    height: 100vh;
+  }
+
+  .dashboard-header {
+    padding: 6px 8px;
+  }
+
+  .header-content {
+    gap: 8px;
+  }
+
+  .dashboard-header h1 {
     font-size: 13px;
+    font-weight: 600;
+  }
+
+  .header-user {
+    gap: 6px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  .user-info {
+    min-width: 0;
+  }
+
+  .user-name {
+    font-size: 9px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .user-role {
+    font-size: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .header-actions {
+    gap: 6px;
+  }
+
+  .login-header-btn {
+    padding: 5px 8px;
+    font-size: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .dashboard-tabs {
+    gap: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 0;
+  }
+
+  .dashboard-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-btn {
+    min-width: 50px;
+    padding: 8px 6px;
+    font-size: 9px;
+    border-bottom-width: 2px;
+    flex-shrink: 0;
+  }
+
+  .dashboard-content {
+    padding: 8px 0;
+  }
+
+  .tab-content {
+    padding: 0 8px;
+  }
+
+  .profile-view {
+    padding: 8px;
+  }
+
+  .profile-card {
+    padding: 16px 10px;
+    border-radius: 8px;
+  }
+
+  .profile-avatar-large {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+    margin: 0 auto 8px;
+  }
+
+  .profile-card h2 {
+    font-size: 15px;
+    margin: 0 0 4px 0;
+  }
+
+  .profile-role {
+    font-size: 10px;
+    margin-bottom: 10px;
+  }
+
+  .profile-details {
+    padding: 8px;
+    margin-bottom: 10px;
+    background: #f5f5f5;
+    border-radius: 6px;
+  }
+
+  .detail-item {
+    padding: 5px 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .detail-label {
+    font-size: 9px;
+    color: #999;
+    margin-bottom: 2px;
+  }
+
+  .detail-value {
+    font-size: 10px;
+    word-break: break-word;
+  }
+
+  .logout-btn {
+    padding: 6px 10px;
+    font-size: 10px;
+    margin-top: 6px;
+    width: 100%;
   }
 }
 

@@ -5,7 +5,15 @@ import "../responsive.css";
 function Welcome() {
   const navigate = useNavigate();
 
-  const handleProceed = () => {
+  const handleGetStarted = () => {
+    navigate("/dashboard");
+  };
+
+  const handleLearnMore = () => {
+    navigate("/learn-more");
+  };
+
+  const handleLogin = () => {
     navigate("/login");
   };
 
@@ -14,7 +22,7 @@ function Welcome() {
       
       <header className="navbar">
         <h2 className="logo">AtongAni</h2>
-        <button className="nav-btn" onClick={handleProceed}>
+        <button className="nav-btn" onClick={handleLogin}>
           Login
         </button>
       </header>
@@ -27,10 +35,10 @@ function Welcome() {
           to consumers — fair prices, no middlemen.
         </p>
         <div className="hero-actions">
-          <button className="primary-btn" onClick={handleProceed}>
+          <button className="primary-btn" onClick={handleGetStarted}>
             Get Started
           </button>
-          <button className="secondary-btn" onClick={handleProceed}>
+          <button className="secondary-btn" onClick={handleLearnMore}>
             Learn More
           </button>
         </div>
