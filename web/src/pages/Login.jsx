@@ -202,6 +202,10 @@ export default function Login() {
 
             <button className="primary-btn full-width">Login</button>
 
+            <button className="full-width" type="button" onClick={() => navigate("/")} style={{ marginTop: "10px", backgroundColor: "white", border: "1px solid #ddd", padding: "10px", cursor: "pointer", fontSize: "14px", fontWeight: "500" }}>
+              ← Back to Home
+            </button>
+
             <p className="auth-switch">
               No account?{" "}
               <button type="button" onClick={() => switchMode("register-customer")}>
@@ -221,6 +225,10 @@ export default function Login() {
             <input value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} type="password" placeholder="Confirm password" required />
 
             <button className="primary-btn full-width">Register as Customer</button>
+
+            <button className="full-width" type="button" onClick={() => navigate("/")} style={{ marginTop: "10px", backgroundColor: "white", border: "1px solid #ddd", padding: "10px", cursor: "pointer", fontSize: "14px", fontWeight: "500" }}>
+              ← Back to Home
+            </button>
 
             <p className="auth-switch">
               Already have an account?{" "}
@@ -255,6 +263,10 @@ export default function Login() {
 
             <button className="primary-btn full-width">Register as Farmer</button>
 
+            <button className="full-width" type="button" onClick={() => navigate("/")} style={{ marginTop: "10px", backgroundColor: "white", border: "1px solid #ddd", padding: "10px", cursor: "pointer", fontSize: "14px", fontWeight: "500" }}>
+              ← Back to Home
+            </button>
+
             <p className="auth-switch">
               <button type="button" onClick={() => switchMode("login")}>Login</button>
             </p>
@@ -274,6 +286,10 @@ export default function Login() {
             <input value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} type="password" placeholder="Confirm password" required />
 
             <button className="primary-btn full-width">Register as Rider</button>
+
+            <button className="full-width" type="button" onClick={() => navigate("/")} style={{ marginTop: "10px", backgroundColor: "white", border: "1px solid #ddd", padding: "10px", cursor: "pointer", fontSize: "14px", fontWeight: "500" }}>
+              ← Back to Home
+            </button>
 
             <p className="auth-switch">
               <button type="button" onClick={() => switchMode("login")}>Login</button>

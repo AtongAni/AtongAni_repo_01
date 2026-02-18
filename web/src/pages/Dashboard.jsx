@@ -42,7 +42,7 @@ export default function Dashboard() {
 
   function handleLogout() {
     clearAuthToken();
-    navigate("/login");
+    navigate("/");
   }
 
   function handlePostCreated() {
@@ -58,6 +58,13 @@ export default function Dashboard() {
       <header className="dashboard-header">
         <div className="header-content">
           <h1>AtongAni</h1>
+          {!user && (
+            <div className="header-actions">
+              <button className="login-header-btn" onClick={() => navigate("/login")}>
+                Login / Sign Up
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
