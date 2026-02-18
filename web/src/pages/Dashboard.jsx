@@ -58,20 +58,6 @@ export default function Dashboard() {
       <header className="dashboard-header">
         <div className="header-content">
           <h1>AtongAni</h1>
-          {user ? (
-            <div className="header-user">
-              <span className="user-avatar">{user.username.charAt(0).toUpperCase()}</span>
-              <div className="user-info">
-                <p className="user-name">{user.username}</p>
-              </div>
-            </div>
-          ) : (
-            <div className="header-actions">
-              <button className="login-header-btn" onClick={() => navigate("/login")}>
-                Login / Sign Up
-              </button>
-            </div>
-          )}
         </div>
       </header>
 
