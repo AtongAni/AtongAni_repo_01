@@ -2,6 +2,7 @@ from rest_framework import viewsets, permissions, filters, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
+from django.utils import timezone
 from .models import Post, PostImage
 from .serializers import PostSerializer, PostImageSerializer
 from comments.models import Comment
@@ -211,3 +212,174 @@ class PostCommentViewSet(viewsets.ViewSet):
             return Response(status=204)
         except Comment.DoesNotExist:
             return Response({'error': 'Comment not found'}, status=404)
+
+
+from .models import FarmerHarvestProfile
+from .serializers import FarmerHarvestProfileSerializer
+
+
+class FarmerHarvestProfileViewSet(viewsets.ModelViewSet):
+    """ViewSet for managing farmer harvest profiles and verification"""
+    serializer_class = FarmerHarvestProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_queryset(self):
+        """Users can only see their own profile, admins can see all"""
+        user = self.request.user
+        if user.is_staff or user.is_superuser:
+            return FarmerHarvestProfile.objects.all()
+        return FarmerHarvestProfile.objects.filter(farmer=user)
+    
+    def get_serializer_context(self):
+        """Ensure request is always in the serializer context"""
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+    
+    def perform_create(self, serializer):
+        """Create a new harvest profile for the current user"""
+        try:
+            serializer.save()
+            logger.info(f"Harvest profile created for farmer {self.request.user.username}")
+        except Exception as e:
+            logger.error(f"Error creating harvest profile for {self.request.user.username}: {str(e)}")
+            raise
+    
+    @action(detail=False, methods=['get'], permission_classes=[permissions.IsAuthenticated])
+    def my_profile(self, request):
+        """Get the current user's harvest profile"""
+        try:
+            profile = FarmerHarvestProfile.objects.get(farmer=request.user)
+            serializer = self.get_serializer(profile)
+            return Response(serializer.data)
+        except FarmerHarvestProfile.DoesNotExist:
+            return Response(
+                {'status': 'not_created', 'message': 'You have not created a harvest forecasting profile yet.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+    
+    @action(detail=False, methods=['get'], permission_classes=[permissions.IsAuthenticated])
+    def verification_status(self, request):
+        """Check if current farmer's profile is verified"""
+        try:
+            profile = FarmerHarvestProfile.objects.get(farmer=request.user)
+            return Response({
+                'is_verified': profile.is_verified(),
+                'status': profile.status,
+                'message': f"Your profile status is: {profile.get_status_display()}"
+            })
+        except FarmerHarvestProfile.DoesNotExist:
+            return Response({
+                'is_verified': False,
+                'status': 'not_created',
+                'message': 'You have not created a harvest forecasting profile yet.'
+            })
+    
+    @action(detail=False, methods=['get'], permission_classes=[permissions.IsAuthenticated])
+    def pending_reviews(self, request):
+        """Get all pending farmer applications (admin only)"""
+        if not (request.user.is_staff or request.user.is_superuser):
+            return Response(
+                {'error': 'Only admins can view pending reviews'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        pending = FarmerHarvestProfile.objects.filter(status='PENDING').order_by('-created_at')
+        serializer = self.get_serializer(pending, many=True)
+        return Response({
+            'count': pending.count(),
+            'profiles': serializer.data
+        })
+    
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+    def approve(self, request, pk=None):
+        """Approve a farmer's harvest profile (admin only)"""
+        if not (request.user.is_staff or request.user.is_superuser):
+            return Response(
+                {'error': 'Only admins can approve profiles'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        profile = self.get_object()
+        admin_notes = request.data.get('admin_notes', '')
+        
+        profile.status = 'APPROVED'
+        profile.approved_by = request.user
+        profile.approved_at = timezone.now()
+        if admin_notes:
+            profile.admin_notes = admin_notes
+        profile.save()
+        
+        # Log the action
+        logger.info(f"Farmer {profile.farmer.username} approved by admin {request.user.username}")
+        
+        serializer = self.get_serializer(profile)
+        return Response({
+            'message': f"Profile for {profile.farmer.username} has been approved",
+            'profile': serializer.data
+        })
+    
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+    def reject(self, request, pk=None):
+        """Reject a farmer's harvest profile (admin only)"""
+        if not (request.user.is_staff or request.user.is_superuser):
+            return Response(
+                {'error': 'Only admins can reject profiles'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        profile = self.get_object()
+        admin_notes = request.data.get('admin_notes', '')
+        
+        if not admin_notes:
+            return Response(
+                {'error': 'Please provide a reason for rejection in admin_notes'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        profile.status = 'REJECTED'
+        profile.approved_by = request.user
+        profile.approved_at = timezone.now()
+        profile.admin_notes = admin_notes
+        profile.save()
+        
+        logger.info(f"Farmer {profile.farmer.username} rejected by admin {request.user.username}")
+        
+        serializer = self.get_serializer(profile)
+        return Response({
+            'message': f"Profile for {profile.farmer.username} has been rejected",
+            'profile': serializer.data
+        })
+    
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+    def request_revision(self, request, pk=None):
+        """Request farmer to revise their profile (admin only)"""
+        if not (request.user.is_staff or request.user.is_superuser):
+            return Response(
+                {'error': 'Only admins can request revisions'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        profile = self.get_object()
+        revision_message = request.data.get('admin_notes', '')
+        
+        if not revision_message:
+            return Response(
+                {'error': 'Please provide specific feedback for revision in admin_notes'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Set status to REVISION_REQUESTED with admin message
+        profile.status = 'REVISION_REQUESTED'
+        profile.admin_notes = revision_message
+        profile.approved_by = request.user
+        profile.approved_at = timezone.now()
+        profile.save()
+        
+        logger.info(f"Revision requested for {profile.farmer.username} by admin {request.user.username}")
+        
+        serializer = self.get_serializer(profile)
+        return Response({
+            'message': f"Revision requested for {profile.farmer.username}",
+            'profile': serializer.data
+        })

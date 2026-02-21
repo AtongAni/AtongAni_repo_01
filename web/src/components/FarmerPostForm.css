@@ -358,6 +358,156 @@
   }
 
   .remove-image-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+}
+
+/* Verification Required Styles */
+.verification-required-box {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffe8a1 100%);
+  border: 2px solid #ffc107;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.verification-required-content h3 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  color: #333;
+}
+
+.verification-required-content p {
+  margin: 0 0 20px;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.btn-avail-feature {
+  background: linear-gradient(135deg, #5c9f62, #7ccf7f);
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-block;
+}
+
+.btn-avail-feature:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(92, 159, 98, 0.3);
+}
+
+.btn-avail-feature:active {
+  transform: translateY(0);
+}
+
+/* Verification Status Boxes */
+.verification-status-box {
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border-left: 4px solid;
+}
+
+.verification-status-box h3 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  color: #333;
+}
+
+.verification-status-box p {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.verification-status-box.in-process {
+  background: #e3f2fd;
+  border-left-color: #2196f3;
+  color: #1976d2;
+}
+
+.verification-status-box.revision-requested {
+  background: #fff3e0;
+  border-left-color: #ff9800;
+  color: #e65100;
+}
+
+.verification-status-box.rejected {
+  background: #ffebee;
+  border-left-color: #f44336;
+  color: #c62828;
+}
+
+.admin-notes-box {
+  background: rgba(0, 0, 0, 0.05);
+  border-left: 3px solid;
+  padding: 12px;
+  border-radius: 4px;
+  margin: 12px 0;
+  font-size: 13px;
+}
+
+.verification-status-box.in-process .admin-notes-box {
+  border-left-color: #2196f3;
+}
+
+.verification-status-box.revision-requested .admin-notes-box {
+  border-left-color: #ff9800;
+}
+
+.verification-status-box.rejected .admin-notes-box {
+  border-left-color: #f44336;
+}
+
+.verification-status-box .btn-avail-feature {
+  background: linear-gradient(135deg, #5c9f62, #7ccf7f);
+  margin-top: 16px;
+}
+
+@media (max-width: 768px) {
+  .verification-required-box {
+    padding: 16px;
+  }
+
+  .verification-required-content h3 {
+    font-size: 16px;
+  }
+
+  .verification-required-content p {
+    font-size: 13px;
+  }
+
+  .btn-avail-feature {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .verification-status-box {
+    padding: 16px;
+  }
+
+  .verification-status-box h3 {
+    font-size: 16px;
+  }
+
+  .verification-status-box p {
+    font-size: 13px;
+  }
+
+  .admin-notes-box {
+    font-size: 12px;
+  }
+}
     padding: 4px;
     font-size: 12px;
   }
