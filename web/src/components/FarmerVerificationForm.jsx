@@ -38,7 +38,7 @@ export default function FarmerVerificationForm({ onVerificationSubmitted, onCanc
           setError(`You already have an active profile with status: ${profile.status}. You can only submit a new application if your previous one was rejected or revision is requested.`);
         }
       } catch (err) {
-        // 404 means no profile exists - farmer can apply
+        // 404 means no profile exists - farmer can apply (this is expected for first-time users)
         if (err?.response?.status === 404) {
           setCanApply(true);
         } else {

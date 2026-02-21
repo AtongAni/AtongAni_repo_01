@@ -53,10 +53,9 @@ export default function HarvestForecastForm({ onPostCreated }) {
       }
     } catch (err) {
       if (err?.response?.status === 404) {
-        // No profile exists yet
+        // No profile exists yet - this is expected for first-time users
         setIsVerified(false);
         setVerificationStatus(null);
-        // Don't auto-show the form - let user click the button
       } else {
         console.error("Error checking verification status:", err);
         setIsVerified(false);
