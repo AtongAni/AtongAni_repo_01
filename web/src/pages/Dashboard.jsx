@@ -20,6 +20,7 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("feed"); // "feed" | "myPosts" | "orders" | "cart" | "profile" | "admin"
   const [refreshFeed, setRefreshFeed] = useState(0);
   const [postType, setPostType] = useState("default"); // "default" | "harvest_forecast"
+  const [myPostsView, setMyPostsView] = useState("create"); // "create" | "default"
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -170,33 +171,65 @@ export default function Dashboard() {
         {/* My Posts Tab - For farmers only */}
         {activeTab === "myPosts" && user?.role === "FARMER" && (
           <div className="tab-content">
-            {/* Post Type Selection */}
-            <div className="post-type-selector">
-              <button
-                className={`post-type-btn ${postType === "default" ? "active" : ""}`}
-                onClick={() => setPostType("default")}
-                title="Create a default product post"
-              >
-                📦 Product Post
-              </button>
-              <button
-                className={`post-type-btn ${postType === "harvest_forecast" ? "active" : ""}`}
-                onClick={() => setPostType("harvest_forecast")}
-                title="Create a harvest forecast"
-              >
-                🌾 Harvest Forecast
-              </button>
-            </div>
+            {/* Create Post Section */}
+            {myPostsView === "create" && (
+              <>
+                {/* Navigation button to Default */}
+                <div className="view-navigation">
+                  <button
+                    className="nav-btn nav-back"
+                    onClick={() => setMyPostsView("default")}
+                    title="View all posts"
+                  >
+                    ← Back to Posts
+                  </button>
+                </div>
 
-            {/* Render appropriate form based on post type */}
-            {postType === "default" && (
-              <FarmerPostForm onPostCreated={handlePostCreated} />
+                {/* Post Type Selection */}
+                <div className="post-type-selector">
+                  <button
+                    className={`post-type-btn ${postType === "default" ? "active" : ""}`}
+                    onClick={() => setPostType("default")}
+                    title="Create a default product post"
+                  >
+                    📦 Product Post
+                  </button>
+                  <button
+                    className={`post-type-btn ${postType === "harvest_forecast" ? "active" : ""}`}
+                    onClick={() => setPostType("harvest_forecast")}
+                    title="Create a harvest forecast"
+                  >
+                    🌾 Avail Harvest Forecast
+                  </button>
+                </div>
+
+                {/* Render appropriate form based on post type */}
+                {postType === "default" && (
+                  <FarmerPostForm onPostCreated={handlePostCreated} />
+                )}
+                {postType === "harvest_forecast" && (
+                  <HarvestForecastForm onPostCreated={handlePostCreated} />
+                )}
+              </>
             )}
-            {postType === "harvest_forecast" && (
-              <HarvestForecastForm onPostCreated={handlePostCreated} />
+
+            {/* Default/View Posts Section */}
+            {myPostsView === "default" && (
+              <>
+                {/* Navigation button to Create Post */}
+                <div className="view-navigation">
+                  <button
+                    className="nav-btn nav-create"
+                    onClick={() => setMyPostsView("create")}
+                    title="Create new post"
+                  >
+                    + Create Post
+                  </button>
+                </div>
+
+                <PostFeed user={user} refreshTrigger={refreshFeed} />
+              </>
             )}
-            
-            <PostFeed user={user} refreshTrigger={refreshFeed} />
           </div>
         )}
 

@@ -399,6 +399,37 @@
 
 }
 
+/* View Navigation */
+.view-navigation {
+  display: flex;
+  margin-bottom: 24px;
+}
+
+.nav-btn {
+  padding: 12px 20px;
+  border: 2px solid #5c9f62;
+  background: white;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  color: #5c9f62;
+}
+
+.nav-btn:hover {
+  background: #f0f7f2;
+  box-shadow: 0 2px 8px rgba(92, 159, 98, 0.15);
+}
+
+.nav-back {
+  margin-right: auto;
+}
+
+.nav-create {
+  margin-left: auto;
+}
+
 /* Post Type Selector */
 .post-type-selector {
   display: flex;
@@ -437,6 +468,15 @@
 }
 
 @media (max-width: 768px) {
+  .view-navigation {
+    margin-bottom: 16px;
+  }
+
+  .nav-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
   .post-type-selector {
     flex-direction: column;
     gap: 8px;
