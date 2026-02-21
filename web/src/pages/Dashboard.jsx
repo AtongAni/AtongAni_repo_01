@@ -15,7 +15,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [status, setStatus] = useState("Loading...");
-  const [activeTab, setActiveTab] = useState("feed"); // "feed" | "myPosts" | "orders" | "cart" | "profile" | "admin"
+  const [activeTab, setActiveTab] = useState("feed");
   const [refreshFeed, setRefreshFeed] = useState(0);
 
   useEffect(() => {
@@ -29,13 +29,11 @@ export default function Dashboard() {
         })
         .catch((err) => {
           console.log(err);
-          // token invalid/expired -> clear auth
           clearAuthToken();
           setUser(null);
           setStatus("");
         });
     } else {
-      // No token - user is browsing as guest
       setStatus("");
     }
   }, []);
@@ -50,182 +48,268 @@ export default function Dashboard() {
     setActiveTab("feed");
   }
 
-  if (status) return <div className="dashboard-loading">{status}</div>;
+  if (status) {
+    return (
+      <div className="dashboard-loading">
+        <div className="loading-spinner"></div>
+        <span>{status}</span>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-container">
-      {/* Header */}
+      {/* Enhanced Header */}
       <header className="dashboard-header">
         <div className="header-content">
-          <h1>AtongAni</h1>
-          {!user && (
+          <div className="brand-section">
+            <div className="brand-icon">🌱</div>
+            <h1 className="brand-title">AtongAni</h1>
+          </div>
+          
+          {user ? (
+            <div className="header-user">
+              <div className="user-avatar">
+                {user.username.charAt(0).toUpperCase()}
+              </div>
+              <div className="user-info">
+                <p className="user-name">{user.username}</p>
+                <p className="user-role">
+                  {user.role === "FARMER" ? "🚜 Farmer" : 
+                   user.role === "RIDER" ? "🏍️ Rider" : 
+                   user.role === "ADMIN" ? "👑 Admin" : "👤 Customer"}
+                </p>
+              </div>
+            </div>
+          ) : (
             <div className="header-actions">
-              <button className="login-header-btn" onClick={() => navigate("/login")}>
-                Login / Sign Up
+              <button 
+                className="login-header-btn" 
+                onClick={() => navigate("/login")}
+              >
+                <span className="btn-text">Login / Sign Up</span>
               </button>
             </div>
           )}
         </div>
       </header>
 
-      {/* Tabs Navigation */}
+      {/* Enhanced Tabs Navigation */}
       <nav className="dashboard-tabs">
-        <button
-          className={`tab-btn ${activeTab === "feed" ? "active" : ""}`}
-          onClick={() => setActiveTab("feed")}
-          title="Browse all posts"
-        >
-          Feed
-        </button>
+        <div className="tabs-container">
+          <button
+            className={`tab-btn ${activeTab === "feed" ? "active" : ""}`}
+            onClick={() => setActiveTab("feed")}
+            title="Browse all posts"
+          >
+            <span className="tab-icon">📱</span>
+            <span className="tab-label">Feed</span>
+          </button>
 
-        {user?.role === "FARMER" && (
-          <>
+          {user?.role === "FARMER" && (
+            <>
+              <button
+                className={`tab-btn ${activeTab === "myPosts" ? "active" : ""}`}
+                onClick={() => setActiveTab("myPosts")}
+                title="Manage your posts"
+              >
+                <span className="tab-icon">📝</span>
+                <span className="tab-label">My Posts</span>
+              </button>
+              <button
+                className={`tab-btn ${activeTab === "orders" ? "active" : ""}`}
+                onClick={() => setActiveTab("orders")}
+                title="Manage customer orders"
+              >
+                <span className="tab-icon">📦</span>
+                <span className="tab-label">Orders</span>
+              </button>
+            </>
+          )}
+
+          {user && (
             <button
-              className={`tab-btn ${activeTab === "myPosts" ? "active" : ""}`}
-              onClick={() => setActiveTab("myPosts")}
-              title="Manage your posts"
+              className={`tab-btn ${activeTab === "cart" ? "active" : ""}`}
+              onClick={() => setActiveTab("cart")}
+              title="View shopping cart"
             >
-              My Posts
+              <span className="tab-icon">🛒</span>
+              <span className="tab-label">Cart</span>
             </button>
+          )}
+
+          {user?.role === "CUSTOMER" && (
             <button
               className={`tab-btn ${activeTab === "orders" ? "active" : ""}`}
               onClick={() => setActiveTab("orders")}
-              title="Manage customer orders"
+              title="View your orders"
             >
-              Orders
+              <span className="tab-icon">📋</span>
+              <span className="tab-label">My Orders</span>
             </button>
-          </>
-        )}
+          )}
 
-        {user && (
-          <button
-            className={`tab-btn ${activeTab === "cart" ? "active" : ""}`}
-            onClick={() => setActiveTab("cart")}
-            title="View shopping cart"
-          >
-            Cart
-          </button>
-        )}
+          {user?.role === "RIDER" && (
+            <button
+              className={`tab-btn ${activeTab === "deliveries" ? "active" : ""}`}
+              onClick={() => setActiveTab("deliveries")}
+              title="Manage deliveries"
+            >
+              <span className="tab-icon">🚚</span>
+              <span className="tab-label">Deliveries</span>
+            </button>
+          )}
 
-        {user?.role === "CUSTOMER" && (
-          <button
-            className={`tab-btn ${activeTab === "orders" ? "active" : ""}`}
-            onClick={() => setActiveTab("orders")}
-            title="View your orders"
-          >
-            My Orders
-          </button>
-        )}
+          {user?.role === "ADMIN" && (
+            <button
+              className={`tab-btn ${activeTab === "admin" ? "active" : ""}`}
+              onClick={() => setActiveTab("admin")}
+              title="Admin dashboard"
+            >
+              <span className="tab-icon">⚙️</span>
+              <span className="tab-label">Admin</span>
+            </button>
+          )}
 
-        {user?.role === "RIDER" && (
-          <button
-            className={`tab-btn ${activeTab === "deliveries" ? "active" : ""}`}
-            onClick={() => setActiveTab("deliveries")}
-            title="Manage deliveries"
-          >
-            Deliveries
-          </button>
-        )}
-
-        {user?.role === "ADMIN" && (
-          <button
-            className={`tab-btn ${activeTab === "admin" ? "active" : ""}`}
-            onClick={() => setActiveTab("admin")}
-            title="Admin dashboard"
-          >
-            Admin
-          </button>
-        )}
-
-        {user && (
-          <button
-            className={`tab-btn ${activeTab === "profile" ? "active" : ""}`}
-            onClick={() => setActiveTab("profile")}
-            title="Account settings"
-          >
-            Profile
-          </button>
-        )}
+          {user && (
+            <button
+              className={`tab-btn ${activeTab === "profile" ? "active" : ""}`}
+              onClick={() => setActiveTab("profile")}
+              title="Account settings"
+            >
+              <span className="tab-icon">👤</span>
+              <span className="tab-label">Profile</span>
+            </button>
+          )}
+        </div>
       </nav>
 
-      {/* Tab Content */}
+      {/* Enhanced Tab Content */}
       <main className="dashboard-content">
-        {/* Feed Tab - For all users (including guests) */}
         {activeTab === "feed" && (
-          <PostFeed user={user} refreshTrigger={refreshFeed} />
+          <div className="tab-content-wrapper">
+            <PostFeed user={user} refreshTrigger={refreshFeed} />
+          </div>
         )}
 
-        {/* My Posts Tab - For farmers only */}
         {activeTab === "myPosts" && user?.role === "FARMER" && (
-          <div className="tab-content">
+          <div className="tab-content-wrapper">
+            <div className="section-header">
+              <h2>Manage Your Posts</h2>
+              <p>Create and manage your agricultural listings</p>
+            </div>
             <FarmerPostForm onPostCreated={handlePostCreated} />
             <PostFeed user={user} refreshTrigger={refreshFeed} />
           </div>
         )}
 
-        {/* Orders Tab - For farmers only */}
         {activeTab === "orders" && user?.role === "FARMER" && (
-          <div className="tab-content">
+          <div className="tab-content-wrapper">
+            <div className="section-header">
+              <h2>Order Management</h2>
+              <p>Track and manage customer orders</p>
+            </div>
             <FarmerOrdersManagement />
           </div>
         )}
 
-        {/* Cart Tab - For authenticated users only */}
         {activeTab === "cart" && user && (
-          <CartView />
+          <div className="tab-content-wrapper">
+            <div className="section-header">
+              <h2>Shopping Cart</h2>
+              <p>Review your selected items</p>
+            </div>
+            <CartView />
+          </div>
         )}
 
-        {/* My Orders Tab - For customers only */}
         {activeTab === "orders" && user?.role === "CUSTOMER" && (
-          <div className="tab-content">
+          <div className="tab-content-wrapper">
+            <div className="section-header">
+              <h2>My Orders</h2>
+              <p>Track your order history and status</p>
+            </div>
             <OrdersView />
           </div>
         )}
 
-        {/* Deliveries Tab - For riders only */}
         {activeTab === "deliveries" && user?.role === "RIDER" && (
-          <RiderDashboard />
+          <div className="tab-content-wrapper">
+            <div className="section-header">
+              <h2>Delivery Management</h2>
+              <p>Manage your delivery assignments</p>
+            </div>
+            <RiderDashboard />
+          </div>
         )}
 
-        {/* Admin Dashboard - For admins only */}
         {activeTab === "admin" && user?.role === "ADMIN" && (
-          <AdminDashboard user={user} />
+          <div className="tab-content-wrapper">
+            <div className="section-header">
+              <h2>Admin Dashboard</h2>
+              <p>System administration and management</p>
+            </div>
+            <AdminDashboard user={user} />
+          </div>
         )}
 
-        {/* Profile Tab */}
         {activeTab === "profile" && user && (
-          <div className="profile-view">
-            <div className="profile-card">
-              <div className="profile-avatar-large">
-                {user.username.charAt(0).toUpperCase()}
-              </div>
-              <h2>{user.username}</h2>
-              <p className="profile-role">
-                {user.role === "FARMER" ? "🚜 Farmer" : user.role === "RIDER" ? "🏍️ Rider" : "👤 Customer"}
-              </p>
+          <div className="tab-content-wrapper">
+            <div className="profile-view">
+              <div className="profile-card">
+                <div className="profile-header">
+                  <div className="profile-avatar-large">
+                    {user.username.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="profile-info">
+                    <h2>{user.username}</h2>
+                    <p className="profile-role">
+                      {user.role === "FARMER" ? "🚜 Farmer" : 
+                       user.role === "RIDER" ? "🏍️ Rider" : 
+                       user.role === "ADMIN" ? "👑 Admin" : "👤 Customer"}
+                    </p>
+                  </div>
+                </div>
 
-              <div className="profile-details">
-                <div className="detail-item">
-                  <span className="detail-label">Email</span>
-                  <span className="detail-value">{user.email}</span>
+                <div className="profile-details">
+                  <div className="detail-item">
+                    <div className="detail-icon">📧</div>
+                    <div className="detail-content">
+                      <span className="detail-label">Email</span>
+                      <span className="detail-value">***{user.email}***</span>
+                    </div>
+                  </div>
+                  <div className="detail-item">
+                    <div className="detail-icon">🏷️</div>
+                    <div className="detail-content">
+                      <span className="detail-label">Account Type</span>
+                      <span className="detail-value">
+                        {user.role === "FARMER" ? "Farmer Account" : 
+                         user.role === "RIDER" ? "Rider Account" : 
+                         user.role === "ADMIN" ? "Admin Account" : "Customer Account"}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="detail-item">
+                    <div className="detail-icon">📅</div>
+                    <div className="detail-content">
+                      <span className="detail-label">Member Since</span>
+                      <span className="detail-value">
+                        {new Date(user.date_joined).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div className="detail-item">
-                  <span className="detail-label">Account Type</span>
-                  <span className="detail-value">
-                    {user.role === "FARMER" ? "Farmer Account" : user.role === "RIDER" ? "Rider Account" : "Customer Account"}
-                  </span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">Member Since</span>
-                  <span className="detail-value">
-                    {new Date(user.date_joined).toLocaleDateString()}
-                  </span>
-                </div>
-              </div>
 
-              <button onClick={handleLogout} className="logout-btn">
-                Logout
-              </button>
+                <button onClick={handleLogout} className="logout-btn">
+                  <span className="btn-icon">🚪</span>
+                  <span className="btn-text">Logout</span>
+                </button>
+              </div>
             </div>
           </div>
         )}
