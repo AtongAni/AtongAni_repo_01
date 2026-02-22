@@ -44,11 +44,18 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error('API Error:', {
-      status: error?.response?.status,
-      data: error?.response?.data,
-      message: error?.message,
-    });
+    // Don't log 404 errors for harvest profile endpoint - it's expected when no profile exists yet
+    const isExpectedNotFound = 
+      error?.response?.status === 404 && 
+      error?.config?.url?.includes('farmer-harvest-profile/my_profile');
+    
+    if (!isExpectedNotFound) {
+      console.error('API Error:', {
+        status: error?.response?.status,
+        data: error?.response?.data,
+        message: error?.message,
+      });
+    }
     return Promise.reject(error);
   }
 );

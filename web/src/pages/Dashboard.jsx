@@ -4,10 +4,12 @@ import { me } from "../api/auth";
 import { setAuthToken, clearAuthToken } from "../api/client";
 import PostFeed from "../components/PostFeed";
 import FarmerPostForm from "../components/FarmerPostForm";
+import HarvestForecastForm from "../components/HarvestForecastForm";
 import FarmerOrdersManagement from "../components/FarmerOrdersManagement";
 import OrdersView from "../components/OrdersView";
 import CartView from "../components/CartView";
 import AdminDashboard from "../components/AdminDashboard";
+import AdminVerificationDashboard from "../components/AdminVerificationDashboard";
 import RiderDashboard from "../components/RiderDashboard";
 import "./Dashboard.css";
 
@@ -17,6 +19,8 @@ export default function Dashboard() {
   const [status, setStatus] = useState("Loading...");
   const [activeTab, setActiveTab] = useState("feed");
   const [refreshFeed, setRefreshFeed] = useState(0);
+  const [postType, setPostType] = useState("default"); // "default" | "harvest_forecast"
+  const [myPostsView, setMyPostsView] = useState("create"); // "create" | "default"
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -161,14 +165,22 @@ export default function Dashboard() {
           )}
 
           {user?.role === "ADMIN" && (
-            <button
-              className={`tab-btn ${activeTab === "admin" ? "active" : ""}`}
-              onClick={() => setActiveTab("admin")}
-              title="Admin dashboard"
-            >
-              <span className="tab-icon">⚙️</span>
-              <span className="tab-label">Admin</span>
-            </button>
+            <>
+              <button
+                className={`tab-btn ${activeTab === "admin" ? "active" : ""}`}
+                onClick={() => setActiveTab("admin")}
+                title="Admin dashboard"
+              >
+                Admin
+              </button>
+              <button
+                className={`tab-btn ${activeTab === "verification" ? "active" : ""}`}
+                onClick={() => setActiveTab("verification")}
+                title="Review farmer verifications"
+              >
+                Verifications
+              </button>
+            </>
           )}
 
           {user && (
@@ -193,13 +205,66 @@ export default function Dashboard() {
         )}
 
         {activeTab === "myPosts" && user?.role === "FARMER" && (
-          <div className="tab-content-wrapper">
-            <div className="section-header">
-              <h2>Manage Your Posts</h2>
-              <p>Create and manage your agricultural listings</p>
-            </div>
-            <FarmerPostForm onPostCreated={handlePostCreated} />
-            <PostFeed user={user} refreshTrigger={refreshFeed} />
+          <div className="tab-content">
+            {/* Create Post Section */}
+            {myPostsView === "create" && (
+              <>
+                {/* Navigation button to Default */}
+                <div className="view-navigation">
+                  <button
+                    className="nav-btn nav-back"
+                    onClick={() => setMyPostsView("default")}
+                    title="View all posts"
+                  >
+                    ← Back to Posts
+                  </button>
+                </div>
+
+                {/* Post Type Selection */}
+                <div className="post-type-selector">
+                  <button
+                    className={`post-type-btn ${postType === "default" ? "active" : ""}`}
+                    onClick={() => setPostType("default")}
+                    title="Create a default product post"
+                  >
+                    📦 Product Post
+                  </button>
+                  <button
+                    className={`post-type-btn ${postType === "harvest_forecast" ? "active" : ""}`}
+                    onClick={() => setPostType("harvest_forecast")}
+                    title="Create a harvest forecast"
+                  >
+                    🌾 Avail Harvest Forecast
+                  </button>
+                </div>
+
+                {/* Render appropriate form based on post type */}
+                {postType === "default" && (
+                  <FarmerPostForm onPostCreated={handlePostCreated} />
+                )}
+                {postType === "harvest_forecast" && (
+                  <HarvestForecastForm onPostCreated={handlePostCreated} />
+                )}
+              </>
+            )}
+
+            {/* Default/View Posts Section */}
+            {myPostsView === "default" && (
+              <>
+                {/* Navigation button to Create Post */}
+                <div className="view-navigation">
+                  <button
+                    className="nav-btn nav-create"
+                    onClick={() => setMyPostsView("create")}
+                    title="Create new post"
+                  >
+                    + Create Post
+                  </button>
+                </div>
+
+                <PostFeed user={user} refreshTrigger={refreshFeed} />
+              </>
+            )}
           </div>
         )}
 
@@ -253,6 +318,12 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* Farmer Verification Dashboard - For admins only */}
+        {activeTab === "verification" && user?.role === "ADMIN" && (
+          <AdminVerificationDashboard />
+        )}
+
+        {/* Profile Tab */}
         {activeTab === "profile" && user && (
           <div className="tab-content-wrapper">
             <div className="profile-view">
