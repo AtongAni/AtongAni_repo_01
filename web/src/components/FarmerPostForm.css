@@ -2,44 +2,44 @@
   background: white;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 20px;
+  padding: 16px;
+  margin-bottom: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .farmer-post-form h3 {
-  margin: 0 0 16px;
-  font-size: 18px;
+  margin: 0 0 14px;
+  font-size: 16px;
   color: #333;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .form-group label {
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   color: #333;
 }
 
 .form-input,
 .form-textarea {
-  padding: 12px 12px;
+  padding: 8px 8px;
   border: 1px solid #ddd;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: 13px;
   font-family: inherit;
   transition: border-color 0.2s ease;
-  font-size: 16px; /* Prevents zoom on iOS */
+  font-size: 14px; /* Prevents zoom on iOS */
 }
 
 .form-input:focus,
@@ -51,11 +51,11 @@
 
 .form-textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 80px;
 }
 
 .char-count {
-  font-size: 11px;
+  font-size: 10px;
   color: #999;
   text-align: right;
 }
@@ -68,7 +68,7 @@
 }
 
 .image-help-text {
-  font-size: 12px;
+  font-size: 11px;
   color: #666;
   margin: 0;
 }
@@ -163,13 +163,13 @@
 }
 
 .clear-image-btn {
-  padding: 8px 16px;
+  padding: 7px 14px;
   background: #ff6b6b;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   transition: background 0.2s ease;
 }
@@ -180,34 +180,34 @@
 
 /* Form Error and Success */
 .form-error {
-  padding: 10px 12px;
+  padding: 9px 11px;
   background: #ffebee;
   color: #d32f2f;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
 }
 
 .form-success {
-  padding: 10px 12px;
+  padding: 9px 11px;
   background: #d4edda;
   color: #155724;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
 }
 
 .submit-btn {
-  padding: 14px;
+  padding: 12px;
   background: #4caf50;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   transition: background 0.2s ease;
-  min-height: 44px;
+  min-height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -225,79 +225,137 @@
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 14px;
 }
 
 @media (max-width: 480px) {
   .farmer-post-form {
-    padding: 16px;
-    margin-bottom: 16px;
+    padding: 11px;
+    margin-bottom: 11px;
     border-radius: 6px;
   }
 
   .farmer-post-form h3 {
-    font-size: 16px;
-    margin-bottom: 12px;
+    font-size: 13px;
+    margin-bottom: 9px;
     font-weight: 700;
   }
 
   .form {
-    gap: 12px;
+    gap: 9px;
   }
 
   .form-group label {
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 600;
   }
 
   .form-input,
   .form-textarea {
-    padding: 12px 10px;
-    font-size: 16px; /* Prevents zoom */
+    padding: 7px 6px;
+    font-size: 13px; /* Prevents zoom */
   }
 
   .form-textarea {
-    min-height: 100px;
+    min-height: 70px;
   }
 
   .submit-btn {
-    padding: 12px;
-    font-size: 14px;
-    min-height: 48px;
+    padding: 9px;
+    font-size: 12px;
+    min-height: 40px;
     border-radius: 6px;
   }
 
   .form-row {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 9px;
   }
 
   .char-count {
-    font-size: 10px;
+    font-size: 9px;
   }
 
   .image-preview {
-    max-height: 150px;
+    max-height: 110px;
+  }
+
+  .image-preview-grid {
+    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+    gap: 7px;
+    padding: 7px;
+  }
+
+  .image-preview-item {
+    border-radius: 3px;
+  }
+
+  .remove-image-btn {
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+    top: 2px;
+    right: 2px;
+  }
+
+  .verification-required-box {
+    padding: 11px;
+    margin-bottom: 14px;
+  }
+
+  .verification-required-content h3 {
+    font-size: 13px;
+    margin-bottom: 9px;
+  }
+
+  .verification-required-content p {
+    font-size: 11px;
+    margin-bottom: 11px;
+  }
+
+  .btn-avail-feature {
+    padding: 9px 14px;
+    font-size: 12px;
+  }
+
+  .verification-status-box {
+    padding: 11px;
+    margin-bottom: 11px;
+  }
+
+  .verification-status-box h3 {
+    font-size: 12px;
+    margin-bottom: 7px;
+  }
+
+  .verification-status-box p {
+    font-size: 11px;
+    margin-bottom: 7px;
+  }
+
+  .admin-notes-box {
+    font-size: 10px;
+    padding: 7px;
   }
 }
 
 @media (max-width: 360px) {
   .farmer-post-form {
-    padding: 12px;
-    margin-bottom: 12px;
+    padding: 9px;
+    margin-bottom: 9px;
     border-radius: 4px;
     background: white;
     border: 1px solid #f0f0f0;
   }
 
   .farmer-post-form h3 {
-    font-size: 15px;
-    margin-bottom: 10px;
+    font-size: 12px;
+    margin-bottom: 7px;
     font-weight: 700;
   }
 
   .form {
-    gap: 10px;
+    gap: 7px;
   }
 
   .form-group {
@@ -305,46 +363,56 @@
   }
 
   .form-group label {
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
   }
 
   .form-input,
   .form-textarea {
-    padding: 10px 8px;
-    font-size: 15px;
+    padding: 6px 5px;
+    font-size: 12px;
     border-radius: 4px;
     border: 1px solid #ddd;
   }
 
   .form-textarea {
-    min-height: 80px;
+    min-height: 60px;
     resize: vertical;
   }
 
   .submit-btn {
-    padding: 10px;
-    font-size: 13px;
-    min-height: 40px;
+    padding: 7px;
+    font-size: 11px;
+    min-height: 38px;
     border-radius: 4px;
     width: 100%;
   }
 
   .form-row {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 7px;
   }
 
   .char-count {
-    font-size: 9px;
+    font-size: 8px;
     color: #999;
     margin-top: 2px;
   }
 
   .image-preview {
-    max-height: 120px;
+    max-height: 90px;
     border-radius: 4px;
+  }
+
+  .image-preview-grid {
+    grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
+    gap: 5px;
+    padding: 5px;
+  }
+
+  .image-preview-item {
+    border-radius: 2px;
   }
 
   .image-group {
@@ -358,8 +426,140 @@
   }
 
   .remove-image-btn {
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
+    font-size: 9px;
+    top: 2px;
+    right: 2px;
+  }
+
+  .uploaded-badge {
+    width: 18px;
+    height: 18px;
+    font-size: 9px;
+  }
+
+  .verification-required-box {
+    padding: 9px;
+    margin-bottom: 11px;
+    border-radius: 6px;
+  }
+
+  .verification-required-content h3 {
+    font-size: 11px;
+    margin-bottom: 7px;
+  }
+
+  .verification-required-content p {
+    font-size: 10px;
+    margin-bottom: 9px;
+  }
+
+  .btn-avail-feature {
+    padding: 7px 11px;
+    font-size: 11px;
+    border-radius: 4px;
+  }
+
+  .verification-status-box {
+    padding: 9px;
+    margin-bottom: 9px;
+    border-radius: 4px;
+  }
+
+  .verification-status-box h3 {
+    font-size: 11px;
+    margin-bottom: 5px;
+  }
+
+  .verification-status-box p {
+    font-size: 10px;
+    margin-bottom: 5px;
+  }
+
+  .admin-notes-box {
+    font-size: 9px;
+    padding: 5px;
+    margin: 5px 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .farmer-post-form {
+    padding: 13px;
+    margin-bottom: 13px;
+  }
+
+  .farmer-post-form h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .form {
+    gap: 10px;
+  }
+
+  .form-group label {
+    font-size: 11px;
+  }
+
+  .form-input,
+  .form-textarea {
+    padding: 8px 7px;
+    font-size: 13px;
+  }
+
+  .form-textarea {
+    min-height: 75px;
+  }
+
+  .submit-btn {
+    padding: 10px;
+    font-size: 12px;
+    min-height: 40px;
+  }
+
+  .form-row {
+    gap: 10px;
+  }
+
+  .image-preview {
+    max-height: 120px;
+  }
+
+  .image-preview-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 9px;
+  }
+
+  .verification-required-box {
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+
+  .verification-required-content h3 {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .verification-required-content p {
+    font-size: 13px;
+  }
+
+  .btn-avail-feature {
+    padding: 10px 18px;
+    font-size: 13px;
+  }
+
+  .verification-status-box {
+    padding: 14px;
+  }
+
+  .verification-status-box h3 {
+    font-size: 14px;
+  }
+
+  .verification-status-box p {
     font-size: 12px;
   }
 }
@@ -369,20 +569,20 @@
   background: linear-gradient(135deg, #fff3cd 0%, #ffe8a1 100%);
   border: 2px solid #ffc107;
   border-radius: 8px;
-  padding: 24px;
-  margin-bottom: 24px;
+  padding: 20px;
+  margin-bottom: 20px;
   text-align: center;
 }
 
 .verification-required-content h3 {
-  margin: 0 0 16px;
-  font-size: 18px;
+  margin: 0 0 14px;
+  font-size: 16px;
   color: #333;
 }
 
 .verification-required-content p {
-  margin: 0 0 20px;
-  font-size: 14px;
+  margin: 0 0 18px;
+  font-size: 13px;
   color: #555;
   line-height: 1.6;
 }
@@ -391,9 +591,9 @@
   background: linear-gradient(135deg, #5c9f62, #7ccf7f);
   color: white;
   border: none;
-  padding: 12px 28px;
+  padding: 11px 24px;
   border-radius: 6px;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.25s ease;
@@ -412,20 +612,20 @@
 /* Verification Status Boxes */
 .verification-status-box {
   border-radius: 8px;
-  padding: 24px;
-  margin-bottom: 24px;
+  padding: 20px;
+  margin-bottom: 20px;
   border-left: 4px solid;
 }
 
 .verification-status-box h3 {
-  margin: 0 0 12px;
-  font-size: 18px;
+  margin: 0 0 10px;
+  font-size: 16px;
   color: #333;
 }
 
 .verification-status-box p {
-  margin: 0 0 12px;
-  font-size: 14px;
+  margin: 0 0 10px;
+  font-size: 13px;
   color: #555;
   line-height: 1.6;
 }
@@ -451,10 +651,10 @@
 .admin-notes-box {
   background: rgba(0, 0, 0, 0.05);
   border-left: 3px solid;
-  padding: 12px;
+  padding: 10px;
   border-radius: 4px;
-  margin: 12px 0;
-  font-size: 13px;
+  margin: 10px 0;
+  font-size: 12px;
 }
 
 .verification-status-box.in-process .admin-notes-box {
@@ -471,44 +671,5 @@
 
 .verification-status-box .btn-avail-feature {
   background: linear-gradient(135deg, #5c9f62, #7ccf7f);
-  margin-top: 16px;
-}
-
-@media (max-width: 768px) {
-  .verification-required-box {
-    padding: 16px;
-  }
-
-  .verification-required-content h3 {
-    font-size: 16px;
-  }
-
-  .verification-required-content p {
-    font-size: 13px;
-  }
-
-  .btn-avail-feature {
-    padding: 10px 20px;
-    font-size: 14px;
-  }
-
-  .verification-status-box {
-    padding: 16px;
-  }
-
-  .verification-status-box h3 {
-    font-size: 16px;
-  }
-
-  .verification-status-box p {
-    font-size: 13px;
-  }
-
-  .admin-notes-box {
-    font-size: 12px;
-  }
-}
-    padding: 4px;
-    font-size: 12px;
-  }
+  margin-top: 14px;
 }
