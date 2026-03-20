@@ -1,0 +1,25 @@
+architecture:
+
+├── rag/
+│   ├── apps.py
+│   ├── models.py              # DocumentChunk, EmbeddingLog
+│   ├── serializers.py         # QueryRequest, QueryResponse
+│   ├── views.py               # QueryView, IndexView
+│   ├── urls.py                # /api/rag/query/, /api/rag/index/
+│   ├── signals.py             # Auto-index when a Post is saved
+│   ├── tasks.py               # Optional: Celery async indexing
+│   ├── admin.py
+│   ├── embeddings/
+│   │   ├── base.py            # Abstract BaseEmbedder
+│   │   └── sentence_transformer.py  # HuggingFace local embeddings
+│   ├── vector_store/
+│   │   ├── base.py            # Abstract BaseVectorStore
+│   │   └── chroma.py          # ChromaDB implementation
+│   ├── retriever/
+│   │   └── semantic.py        # Top-K similarity retriever
+│   └── pipeline/
+│       ├── ingestion.py       # Chunk → embed → store
+│       └── query.py           # Embed query → retrieve → generate
+└── management/
+    └── commands/
+        └── index_posts.py     # python manage.py index_posts
